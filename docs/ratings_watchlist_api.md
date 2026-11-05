@@ -1,0 +1,463 @@
+
+# Ratings and Watchlist Module (API Reference)
+
+## 1. Overview
+
+This module handles the ratings and watchlist features of the Netflix Review Application using MariaDB.
+
+It allows users to:
+- Add ratings for movies.
+- View their existing ratings.
+- Update or delete their ratings.
+- Add movies to their watchlist.
+- View and remove movies from their watchlist.
+- View the average rating and total number of ratings for a movie.
+- Retrieve the highest-rated movies based on user ratings.
+
+**Files:**
+- `db/mariadb.py`: Contains the MariaDB connection helper and ratings and watchlist functions.
+- `sql/advanced_queries.sql`: Contains the advanced SQL queries.
+- `docs/sql_test_results.md`: Records the SQL testing and verification results.
+
+
+
+## 2. Ratings Management
+
+### `add_rating(user_id, movie_id, stars)`
+
+Adds a new rating for a movie by a specific user.
+
+**Parameters**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `user_id` | int | ID of the user giving the rating |
+| `movie_id` | str | ID of the movie being rated |
+| `stars` | int | Rating given by the user (1 to 5) |
+
+**Returns**
+- `True` if the rating is added successfully.
+- `False` if the user has already rated the same movie.
+- Raises `ValueError` if the user ID or movie ID does not exist.
+- Raises `ValueError` if the rating is not an integer between 1 and 5.
+
+**Example**
+
+```python
+from db.mariadb import add_rating
+
+result = add_rating(1, "s10", 4)
+print(result)
+```
+
+### `get_rating(user_id, movie_id)`
+
+Retrieves the rating given by a specific user for a movie.
+
+**Parameters**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `user_id` | int | ID of the user |
+| `movie_id` | str | ID of the movie |
+
+**Returns**
+
+A dictionary containing:
+- `stars`
+- `updated_at`
+
+Returns `None` if the user has not rated the movie.
+
+**Example**
+
+```python
+from db.mariadb import get_rating
+
+rating = get_rating(1, "s10")
+
+if rating:
+    print(rating["stars"])
+else:
+    print("No rating found.")
+```
+
+### `update_rating(user_id, movie_id, stars)`
+
+Updates an existing rating given by a user.
+
+The new rating must be an integer between 1 and 5.
+
+**Parameters**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `user_id` | int | ID of the user |
+| `movie_id` | str | ID of the movie |
+| `stars` | int | New rating (1 to 5) |
+
+**Returns**
+- `True` if the rating is updated successfully.
+- `False` if the rating does not exist.
+- Raises `ValueError` if the rating is not an integer between 1 and 5.
+
+**Example**
+
+```python
+from db.mariadb import update_rating
+
+result = update_rating(1, "s10", 5)
+print(result)
+```
+
+### `delete_rating(user_id, movie_id)`
+
+Deletes a user's rating for a specific movie.
+
+**Parameters**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `user_id` | int | ID of the user |
+| `movie_id` | str | ID of the movie |
+
+**Returns**
+- `True` if the rating is deleted successfully.
+- `False` if the rating does not exist.
+
+**Example**
+
+```python
+from db.mariadb import delete_rating
+
+result = delete_rating(1, "s10")
+print(result)
+```
+
+## 3. Watchlist Management
+
+### `add_to_watchlist(user_id, movie_id)`
+
+Adds a movie to a specific user's watchlist.
+
+**Parameters**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `user_id` | int | ID of the user |
+| `movie_id` | str | ID of the movie |
+
+**Returns**
+- `True` if the movie is added successfully.
+- `False` if the movie is already in the user's watchlist.
+- Raises `ValueError` if the user ID or movie ID does not exist.
+
+**Example**
+
+```python
+from db.mariadb import add_to_watchlist
+
+result = add_to_watchlist(1, "s10")
+print(result)
+```
+
+### `get_watchlist(user_id)`
+
+Retrieves all movies saved in a specific user's watchlist.
+
+**Parameters**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `user_id` | int | ID of the user |
+
+**Returns**
+
+A list of dictionaries containing:
+- `movie_id`
+- `title`
+- `added_at`
+
+Returns an empty list `[]` if the watchlist has no entries.
+
+**Example**
+
+```python
+from db.mariadb import get_watchlist
+
+movies = get_watchlist(1)
+
+for movie in movies:
+    print(movie["title"])
+```
+
+### `remove_from_watchlist(user_id, movie_id)`
+
+Removes a movie from a specific user's watchlist.
+
+**Parameters**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `user_id` | int | ID of the user |
+| `movie_id` | str | ID of the movie |
+
+**Returns**
+- `True` if the movie is removed successfully.
+- `False` if the movie is not in the user's watchlist.
+
+**Example**
+
+```python
+from db.mariadb import remove_from_watchlist
+
+result = remove_from_watchlist(1, "s10")
+print(result)
+```
+
+## 4. Rating Summaries and Advanced SQL
+
+### `get_average_rating(movie_id)`
+
+Calculates the average rating given by users for a specific movie.
+
+**Parameters**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `movie_id` | str | ID of the movie |
+
+**Returns**
+
+The average rating as a decimal value.
+
+Returns `None` if the movie has no ratings.
+
+**Example**
+
+```python
+from db.mariadb import get_average_rating
+
+average = get_average_rating("s10")
+print(average)
+```
+
+### `get_rating_count(movie_id)`
+
+Counts the total number of ratings received by a specific movie.
+
+**Parameters**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `movie_id` | str | ID of the movie |
+
+**Returns**
+
+An integer representing the total number of ratings.
+
+Returns `0` if the movie has no ratings.
+
+**Example**
+
+```python
+from db.mariadb import get_rating_count
+
+count = get_rating_count("s10")
+print(count)
+```
+
+### `get_highest_rated_movies(minimum_ratings=2, limit=10)`
+
+Retrieves the highest-rated movies based on their average user ratings.
+
+The function allows a minimum number of ratings to be set so that movies with very few ratings can be excluded from the results.
+
+**Function signature**
+
+```python
+get_highest_rated_movies(
+    minimum_ratings=2,
+    limit=10
+)
+```
+
+**Parameters**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `minimum_ratings` | int | Minimum number of ratings a movie must have. Defaults to 2. |
+| `limit` | int | Maximum number of movies to return. Defaults to 10. |
+
+Both parameters must be positive integers. Invalid values raise `ValueError`.
+
+**Returns**
+
+A list of dictionaries containing:
+- `movie_id`
+- `title`
+- `average_rating`
+- `rating_count`
+
+Returns an empty list if no movies meet the minimum rating requirement.
+
+**Example**
+
+```python
+from db.mariadb import get_highest_rated_movies
+
+movies = get_highest_rated_movies(
+    minimum_ratings=2,
+    limit=10
+)
+
+for movie in movies:
+    print(
+        movie["title"],
+        movie["average_rating"],
+        movie["rating_count"]
+    )
+```
+
+**SQL features used**
+
+- `JOIN` combines movie details with their ratings.
+- `AVG()` calculates the average rating.
+- `COUNT()` counts the number of ratings.
+- `GROUP BY` groups the ratings by movie.
+- `HAVING` filters movies based on their rating count.
+- `ORDER BY` sorts the movies by their average rating and rating count.
+- `LIMIT` controls the number of results returned.
+
+## 5. Error Handling and Validation
+
+I added input validation and error handling to make sure that invalid data and duplicate entries are handled properly.
+
+**Rating validation**
+
+Ratings are restricted to integers between 1 and 5. If an invalid rating is entered, the function raises `ValueError`.
+
+**Database error handling**
+
+The `add_rating()` and `add_to_watchlist()` functions handle MariaDB integrity errors using the following error codes:
+
+| Error Code | Meaning | Behaviour |
+|---|---|---|
+| 1062 | Duplicate entry | Returns `False` |
+| 1452 | Foreign key constraint failure | Raises `ValueError` |
+| Other | Unexpected integrity error | Raises the original exception |
+
+If an insertion fails, `connection.rollback()` is used to undo the unsuccessful operation.
+
+**Database constraints**
+
+The existing database schema already includes the following constraints:
+
+- Composite primary keys prevent the same user from rating or adding the same movie to their watchlist more than once.
+- Foreign keys ensure that the user and movie IDs exist in their respective tables.
+- The `CHECK` constraint restricts movie ratings to values between 1 and 5.
+
+## 6. SQL Implementation
+
+The module uses different SQL statements depending on the operation:
+
+- `INSERT` to add ratings and watchlist entries.
+- `SELECT` to retrieve ratings and watchlist records.
+- `UPDATE` to change existing ratings.
+- `DELETE` to remove ratings and watchlist entries.
+- `JOIN` to retrieve movie details together with watchlist records.
+- Aggregate functions to calculate average ratings and rating counts.
+- `GROUP BY` and `HAVING` to retrieve movies based on their ratings.
+
+Parameterised SQL queries are used when passing values into the database.
+
+These functions allow users to manage their ratings and watchlists while making use of the existing database constraints.
+
+## 7. Integration Notes
+
+### For Member 1 — Catalogue
+
+The existing `movie_id` returned by `browse_movies()` or `get_movie_details()` can be used when adding ratings or movies to a watchlist.
+
+The ratings and watchlist functions do not modify the movie catalogue.
+
+### For Nusrat — Streamlit UI
+
+Import the required functions from `db.mariadb`:
+
+```python
+from db.mariadb import (
+    add_rating,
+    get_rating,
+    update_rating,
+    delete_rating,
+    add_to_watchlist,
+    get_watchlist,
+    remove_from_watchlist,
+    get_average_rating,
+    get_rating_count
+)
+```
+
+The UI can use these functions to:
+- Allow users to submit and update their ratings.
+- Display a user's existing rating.
+- Allow users to add or remove movies from their watchlist.
+- Display the movies saved in their watchlist.
+- Show the average rating and total number of ratings for a movie.
+
+The UI should also handle `True` and `False` return values and catch `ValueError` exceptions to display suitable messages.
+
+### For Weibin — MongoDB Reviews
+
+The same `movie_id` from the MariaDB catalogue should be used when linking MongoDB review documents to movies.
+
+The ratings and watchlist module only handles data stored in MariaDB and does not modify MongoDB reviews.
+
+## 8. Local Setup
+
+1. Install the required dependencies, including `pymysql` and `python-dotenv`.
+2. Make sure MariaDB is installed and running.
+3. Configure the database credentials in the local `.env` file.
+4. Create the database specified by `DB_NAME`.
+5. Execute `sql/schema.sql` if the database has not been set up yet.
+6. Import the movie catalogue by running:
+
+```powershell
+python -m scripts.import_movies
+```
+
+7. Make sure the required test users exist in the `users` table.
+8. Import the required functions from `db.mariadb` when using the ratings and watchlist features.
+
+**Note:** The database records are stored locally and are not automatically included in GitHub. Each team member needs to set up their own local MariaDB database.
+
+## 9. Testing Results
+
+The ratings and watchlist functions were tested using the local MariaDB database.
+
+The tests covered:
+
+- Adding, retrieving, updating and deleting ratings.
+- Invalid rating values such as 0, 6 and negative numbers.
+- Adding duplicate ratings for the same user and movie.
+- Testing invalid user IDs and movie IDs.
+- Updating and deleting ratings that do not exist.
+- Adding and retrieving movies from the watchlist.
+- Adding duplicate watchlist entries.
+- Testing invalid user IDs and movie IDs for watchlist operations.
+- Removing movies that are not in the watchlist.
+- Calculating average ratings and rating counts.
+- Retrieving the highest-rated movies.
+- Testing invalid `minimum_ratings` and `limit` values.
+
+The detailed SQL query testing results are recorded separately in `docs/sql_test_results.md`.
+
+## 10. Known Limitations
+
+- Each user can only have one rating for each movie.
+- Each movie can only appear once in a user's watchlist.
+- Ratings are restricted to whole numbers from 1 to 5.
+- The highest-rated movies function uses a default minimum of two ratings and returns up to ten movies.
+- The functions require an active connection to the local MariaDB database.
+- The ratings and watchlist records are managed separately from the MongoDB movie reviews.
