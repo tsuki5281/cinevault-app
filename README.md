@@ -34,22 +34,28 @@ The application allows users to browse and search movies, filter by genres and a
 
 ```text
 netflix-review-app/
-├── data/               # Original and cleaned datasets
+├── data/                  # Original and cleaned datasets
 ├── db/
-│   ├── mariadb.py      # MariaDB connection helper
-│   ├── mongodb.py      # MongoDB module (under development)
-│   └── catalogue.py    # Catalogue browsing and movie details
+│   ├── mariadb.py         # MariaDB connection, ratings and watchlist operations
+│   ├── mongodb.py         # MongoDB module
+│   └── catalogue.py       # Catalogue browsing and movie details
 ├── docs/
 │   ├── catalogue_api.md
-│   └── catalogue_test_results.md
+│   ├── catalogue_test_results.md
+│   ├── ratings_watchlist_api.md
+│   ├── sql_test_results.md
+│   ├── er_diagram.png
+│   └── er_diagram.drawio
 ├── scripts/
 │   └── import_movies.py
 ├── sql/
 │   ├── schema.sql
-│   └── validate_catalogue.sql
+│   ├── validate_catalogue.sql
+│   └── advanced_queries.sql
 ├── tests/
-│   └── test_catalogue.py
-├── .env                # Local credentials (not committed)
+│   ├── test_catalogue.py
+│   └── test_ratings_watchlist.py
+├── .env                   # Local credentials (not committed)
 └── README.md
 ```
 
@@ -119,6 +125,22 @@ The tests verify movie retrieval, filtering, sorting, pagination and selected ed
 
 **Note:** The full-catalogue validation currently performs thousands of database queries and is intended for development verification rather than routine application startup.
 
+## Ratings and Watchlist
+
+The application supports movie ratings and personal watchlists through MariaDB.
+
+- **Add ratings:** Users can rate movies from 1 to 5 stars.
+- **Manage ratings:** Users can retrieve, update and delete their ratings.
+- **Manage watchlists:** Users can add movies to and remove movies from their personal watchlists.
+- **Rating summaries:** Calculate average ratings and rating counts for movies.
+- **Highest-rated movies:** Retrieve movies based on their average ratings and minimum rating counts.
+
+The ratings and watchlist operations include input validation and error handling to prevent invalid ratings, duplicate entries and references to non-existent users or movies.
+
+For function details, see [`docs/ratings_watchlist_api.md`](docs/ratings_watchlist_api.md).
+
+For SQL query examples and testing results, see [`docs/sql_test_results.md`](docs/sql_test_results.md).
+
 ## Using the Catalogue Functions
 
 ```python
@@ -170,7 +192,7 @@ MongoDB is used for review documents.
 ## Development Status
 
 - **Catalogue foundation:** Implemented and tested.
-- **Ratings and watchlist:** Under development.
+- **Ratings and watchlist:** Implemented and tested.
 - **MongoDB reviews:** Under development.
 - **Streamlit interface:** Under development.
 

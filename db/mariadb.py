@@ -253,7 +253,7 @@ def get_watchlist(user_id):
                 ORDER BY w.added_at DESC
             """
             cursor.execute(sql, (user_id,))
-            result = cursor.fetchall()
+            result = list(cursor.fetchall())
 
         return result
 
