@@ -9,15 +9,14 @@ It allows users to:
 - View, edit and delete their own reviews.
 - Mark reviews as spoilers and add tags.
 - Browse a movie's reviews (newest/oldest, hide spoilers, filter by tag, pagination).
-- Search review text by keyword.
-- View review statistics (most-reviewed movies, reviews per genre, popular tags, reviews per month).
+- View review statistics (most-reviewed movies and popular tags).
 
 **Files:**
 - `db/mongodb.py`: MongoDB connection, validation rules, indexes and review functions.
 - `scripts/init_mongodb.py`: Creates the `reviews` collection with validation rules and indexes.
-- `data/reviews.csv`: Sample review dataset (20,000 reviews by 200 sample users).
-- `scripts/generate_review_dataset.py`: Creates `data/reviews.csv` (repeatable, fixed random seed).
-- `scripts/convert_reviews_to_mongo.py`: Converts `data/reviews.csv` into typed MongoDB review documents.
+- `data/reviews.csv`: Review dataset for the first 100 movies (144 reviews, 11 sample users).
+- `scripts/convert_reviews_to_mongo.py`: Checks and converts `data/reviews.csv` into typed MongoDB review documents.
+- `scripts/tag_reviews.py`: Assigns each review's tags from keywords in its text.
 - `docs/review_dataset_notes.md`: Review dataset fields and assumptions.
 - `scripts/convert_movies_to_mongo.py`: Converts the MariaDB movie catalogue into MongoDB documents.
 - `scripts/performance_mongodb.py`: Index and SQL vs NoSQL performance tests.
@@ -86,7 +85,6 @@ One document per movie, with genres and actors embedded as arrays. Used for `$lo
 |---|---|---|
 | `uniq_user_movie` | `user_id`, `movie_id` (unique) | `get_review`, `update_review`, `delete_review`, duplicate check |
 | `movie_newest` | `movie_id`, `created_at` (descending) | `get_movie_reviews`, `get_review_count` |
-| `review_text_search` | `review_text` (text) | `search_reviews` |
 
 ## 5. Reviews Management
 
@@ -143,7 +141,7 @@ Deletes a user's review for a specific movie.
 **Returns**
 - `True` if a review was deleted, otherwise `False`.
 
-## 6. Browsing and Searching
+## 6. Browsing Reviews
 
 ### `get_movie_reviews(movie_id, sort_by="newest", hide_spoilers=False, tag=None, limit=20, offset=0)`
 
@@ -164,30 +162,32 @@ Retrieves the reviews for a movie.
 
 Retrieves all reviews written by one user, newest first.
 
+### `get_reviews_by_title(title_keyword, hide_spoilers=False, limit=20, offset=0)`
+
+Finds reviews by movie title (partial match, not case-sensitive), newest first. The matching `movie_id`s are looked up in the MariaDB `movies` table, then their reviews are read from MongoDB. Each returned review has an extra `title` field. Returns `[]` if no title matches; raises `ValueError` for an empty keyword.
+
+```python
+get_reviews_by_title("idiots")   # reviews of "3 Idiots"
+```
+
 ### `get_review_count(movie_id)`
 
 Returns the number of reviews for a movie.
 
-### `search_reviews(keyword, limit=20)`
-
-Searches review text using the text index. Returns reviews with a `score` field, best matches first.
-
-## 7. Review Statistics (Aggregation Pipelines)
+## 7. Advanced Queries (Aggregation Pipelines)
 
 | Function | Returns | MongoDB features used |
 |---|---|---|
-| `get_most_reviewed_movies(limit=10)` | `movie_id`, `title`, `review_count`, `spoiler_count`, `latest_review` | `$group`, `$cond`, `$sort`, `$lookup` |
-| `get_reviews_per_genre(limit=10)` | `genre`, `review_count`, `spoiler_count` | `$lookup`, `$unwind` on embedded arrays, `$group` |
-| `get_popular_tags(limit=10)` | `tag`, `count` | `$unwind`, `$group` |
-| `get_reviews_per_month()` | `month`, `count` | `$dateToString`, `$group` |
+| `get_most_reviewed_movies(limit=10)` | `movie_id`, `title`, `review_count`, `spoiler_count`, `latest_review` | `$group`, `$cond`, `$max`, `$sort`, `$limit`, `$lookup` |
+| `get_popular_tags(limit=10)` | `tag`, `count` | `$unwind`, `$group`, `$sort`, `$limit` |
 
-`get_most_reviewed_movies` and `get_reviews_per_genre` need the `movies` collection, so run the conversion script first.
+`get_most_reviewed_movies` uses `$lookup` on the `movies` collection to show titles, so run `scripts/convert_movies_to_mongo.py` first.
 
 ## 8. Conversion Scripts
 
 ### Review dataset (CSV to MongoDB)
 
-`scripts/convert_reviews_to_mongo.py` converts each flat CSV row into a typed document: `username` becomes `user_id` (sample users are created in MariaDB if missing), `"True"`/`"False"` becomes a boolean, `"acting;ending"` becomes an array, and the ISO date text becomes a BSON date. Rows with a `movie_id` that is not in MariaDB are skipped and counted.
+`scripts/convert_reviews_to_mongo.py` reads `data/reviews.csv` and converts each row into a typed document: `username` becomes `user_id` (sample users are created in MariaDB if missing), `Yes`/`No` becomes a boolean, `"acting;ending"` becomes an array, and the date (Singapore time) becomes a BSON date in UTC. Rows with an unknown `movie_id`, empty text, a duplicate user-movie pair or an invalid spoiler value are skipped and reported with their line number. See `docs/review_dataset_notes.md` for how the reviews were written.
 
 ### Movie catalogue (MariaDB to MongoDB)
 
@@ -214,9 +214,8 @@ from db.mongodb import (
     get_movie_reviews,
     get_user_reviews,
     get_review_count,
-    search_reviews,
+    get_reviews_by_title,
     get_most_reviewed_movies,
-    get_reviews_per_genre,
     get_popular_tags,
 )
 ```
@@ -256,4 +255,4 @@ python -m scripts.performance_mongodb
 - MongoDB cannot enforce foreign keys to MariaDB. The user and movie are checked when a review is added, but deleting a user or movie in MariaDB does not delete their reviews.
 - Each user can only have one review per movie.
 - The `movies` collection is a copy of the MariaDB catalogue; rerun the conversion script after the catalogue changes.
-- Sample reviews are generated, because real Netflix user reviews are not publicly available.
+- The sample reviews cover the first 100 movies only and were made for this project, because real Netflix user reviews are not publicly available (see `docs/review_dataset_notes.md`).

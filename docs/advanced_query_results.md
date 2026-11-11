@@ -2,9 +2,15 @@
 
 ## 1. Overview
 
-This document records the advanced MongoDB queries implemented in `db/mongodb.py` and their results on the sample dataset (20,000 reviews, 4,677 movies), run on 07/11/26.
+This document records the two advanced MongoDB queries implemented in `db/mongodb.py` for the Netflix Review Application, with their results on the review dataset (`data/reviews.csv`: 144 reviews, 100 movies, 11 sample users), run on 11/11/26.
 
-The `movies` collection used by `$lookup` is created by `scripts/convert_movies_to_mongo.py`.
+Both queries use MongoDB's aggregation framework.
+
+To print the results, run from the repository root:
+
+```powershell
+python -c "from db.mongodb import *; print(get_most_reviewed_movies(5)); print(get_popular_tags(5))"
+```
 
 ## 2. Most-Reviewed Movies
 
@@ -31,73 +37,31 @@ Finds the movies with the most reviews, with their spoiler count and latest revi
 
 ### MongoDB Features Used
 
-| Feature | Purpose |
-|---|---|
-| `$group` + `$sum` | Counts reviews per movie (like SQL `GROUP BY` + `COUNT`) |
-| `$cond` | Counts only reviews where `spoiler` is true (like SQL `SUM(CASE WHEN ...)`) |
-| `$max` | Finds the latest review date |
-| `$sort` + `$limit` | Returns the top 5 |
-| `$lookup` | Joins the `movies` collection to get each title (like SQL `JOIN`) |
+| Feature | Purpose | SQL equivalent |
+|---|---|---|
+| `$group` + `$sum` | Counts reviews per movie | `GROUP BY` + `COUNT()` |
+| `$cond` | Counts only reviews where `spoiler` is true | `SUM(CASE WHEN ... THEN 1 ELSE 0 END)` |
+| `$max` | Finds the latest review date | `MAX()` |
+| `$sort` + `$limit` | Returns the top 5 | `ORDER BY` + `LIMIT` |
+| `$lookup` | Joins the `movies` collection to get each title | `JOIN` |
 
 ### Result — `get_most_reviewed_movies(5)`
 
 | movie_id | Title | Reviews | Spoilers | Latest review |
 |---|---|---:|---:|---|
-| s2729 | High End Yaariyan | 13 | 5 | 12/08/26 |
-| s4910 | Popeye | 13 | 2 | 01/11/26 |
-| s2609 | Happy Anniversary | 12 | 1 | 31/10/26 |
-| s2923 | I'm Brent Morin | 12 | 2 | 01/11/26 |
-| s4750 | Pan's Labyrinth | 12 | 4 | 18/08/26 |
+| `s101` | 3 Idiots | 4 | 0 | 28/08/26 |
+| `s28` | #Alive | 4 | 1 | 16/05/26 |
+| `s107` | 365 Days | 3 | 0 | 29/05/26 |
+| `s122` | 50 First Dates | 3 | 1 | 15/06/26 |
+| `s128` | 6 Underground | 3 | 1 | 27/07/26 |
 
-## 3. Reviews per Genre
+Movies with the same review count are ordered by `movie_id` (the second sort key), so 3 Idiots (`s101`) comes before #Alive (`s28`) because the IDs are compared as text. Dates are stored in UTC and shown here in Singapore time.
 
-### Purpose
-
-Counts reviews per genre. Genres are not stored in the review documents, so the pipeline joins each review to its movie and then splits the movie's `genres` array.
-
-### Pipeline
-
-```python
-[
-    {"$lookup": {"from": "movies", "localField": "movie_id",
-                 "foreignField": "movie_id", "as": "movie"}},
-    {"$unwind": "$movie"},
-    {"$unwind": "$movie.genres"},
-    {"$group": {
-        "_id": "$movie.genres",
-        "review_count": {"$sum": 1},
-        "spoiler_count": {"$sum": {"$cond": ["$spoiler", 1, 0]}},
-    }},
-    {"$sort": {"review_count": -1, "_id": 1}},
-    {"$limit": 5},
-]
-```
-
-### MongoDB Features Used
-
-| Feature | Purpose |
-|---|---|
-| `$lookup` | Joins each review to its movie document |
-| `$unwind` (twice) | Turns the joined array into one document, then one row per genre |
-| `$group` + `$cond` | Counts reviews and spoilers per genre |
-
-### Result — `get_reviews_per_genre(5)`
-
-| Genre | Reviews | Spoilers |
-|---|---:|---:|
-| International Movies | 9,387 | 1,429 |
-| Dramas | 8,616 | 1,329 |
-| Comedies | 5,909 | 914 |
-| Action & Adventure | 2,972 | 446 |
-| Independent Movies | 2,866 | 451 |
-
-A movie can belong to several genres, so these counts add up to more than 20,000.
-
-## 4. Popular Tags
+## 3. Popular Tags
 
 ### Purpose
 
-Finds the most used review tags by splitting each review's `tags` array.
+Finds the most used review tags. Each review stores its tags as an array. The tags were assigned by `scripts/tag_reviews.py`, which gives a tag only when one of its keywords appears in that review's text.
 
 ### Pipeline
 
@@ -110,70 +74,24 @@ Finds the most used review tags by splitting each review's `tags` array.
 ]
 ```
 
+### MongoDB Features Used
+
+| Feature | Purpose | SQL equivalent |
+|---|---|---|
+| `$unwind` | Splits each review's `tags` array into one row per tag | A separate `review_tags` table + `JOIN` |
+| `$group` + `$sum` | Counts how often each tag is used | `GROUP BY` + `COUNT()` |
+| `$sort` + `$limit` | Returns the top 5 | `ORDER BY` + `LIMIT` |
+
+In SQL, tags would need their own table and a join. In MongoDB, the array is stored inside the review document and split at query time with `$unwind`.
+
 ### Result — `get_popular_tags(5)`
 
 | Tag | Count |
 |---|---:|
-| visuals | 2,636 |
-| acting | 2,569 |
-| ending | 2,562 |
-| funny | 2,535 |
-| overrated | 2,523 |
+| story | 38 |
+| funny | 37 |
+| emotional | 35 |
+| pacing | 23 |
+| characters | 19 |
 
-In SQL, tags would need a separate `review_tags` table and a join. In MongoDB, the array is stored inside the review and `$unwind` splits it at query time.
-
-## 5. Reviews per Month
-
-### Purpose
-
-Shows review activity over time by grouping on the year and month of `created_at`.
-
-### Pipeline
-
-```python
-[
-    {"$group": {"_id": {"$dateToString": {"format": "%Y-%m", "date": "$created_at"}},
-                "count": {"$sum": 1}}},
-    {"$sort": {"_id": 1}},
-]
-```
-
-### Result — `get_reviews_per_month()` (first 6 months)
-
-| Month | Reviews |
-|---|---:|
-| 2025-01 | 916 |
-| 2025-02 | 888 |
-| 2025-03 | 896 |
-| 2025-04 | 914 |
-| 2025-05 | 917 |
-| 2025-06 | 911 |
-
-The counts are steady because the sample review dates are spread evenly between January 2025 and November 2026.
-
-## 6. Keyword Search (Text Index)
-
-### Purpose
-
-Searches review text for a keyword using the `review_text_search` text index and ranks results by relevance score.
-
-### Query
-
-```python
-reviews.find({"$text": {"$search": "twist"}},
-             {"score": {"$meta": "textScore"}}).sort([("score", {"$meta": "textScore"})])
-```
-
-### Result — `search_reviews("twist", 3)`
-
-| user_id | movie_id | Spoiler | Score | Review text (start) |
-|---:|---|---|---:|---|
-| 258 | s1487 | True | 0.545 | "Honestly, this dramas pick was one where the plot was predictable..." |
-| 13 | s4228 | True | 0.545 | "Surprisingly, this dramas pick was one where the soundtrack was great..." |
-| 46 | s1789 | True | 0.545 | "Surprisingly, this dramas pick was one where it was really enjoyable..." |
-
-All three matches contain "The twist at the end changes everything." and are correctly flagged as spoilers. A SQL `LIKE '%twist%'` cannot use a normal index; the text index also handles word stemming and relevance ranking.
-
-## 7. Conclusion
-
-All five advanced queries ran successfully on the sample data. Together they show MongoDB's aggregation framework (`$group`, `$cond`, `$unwind`, `$lookup`, `$dateToString`) and text search as the NoSQL equivalents of SQL `GROUP BY`, `CASE`, `JOIN` and full-text search.
+The counts add up to more than 144 because one review can have up to 3 tags. 7 reviews have no tags and are dropped by `$unwind`.

@@ -1,145 +1,145 @@
 ﻿movie_id,title,username,review_text,spoiler,tags,created_at
-s2,7:19,sample_user_01,ngl the earthquake was surreal,No,realistic,28/11/2025 12:25
-s2,7:19,sample_user_04,"too much waiting under rubble, kinda draggy",No,pacing,29/10/2026 9:04
-s3,23:59,sample_user_02,"plot twist: the ghost mum isn't the killer, it's her daughter's spirit 💀 the mum actually poisoned her as a kid. didn't see that coming",Yes,story;scary,3/7/2026 11:23
-s3,23:59,sample_user_11,"The late reveal that the vengeful spirit is the medium's poisoned daughter, not the medium herself, reframes the haunting as a tragedy of maternal guilt, though the present-day coda feels like an obligatory sequel hook.",Yes,scary;emotional;story,20/8/2026 9:58
-s4,9,sample_user_03,animation is peak,No,visuals,4/6/2026 14:02
-s4,9,sample_user_07,"cute robots, dark story",No,story,30/3/2025 21:26
-s4,9,sample_user_11,"The tactile, stitched-together character design is a triumph of production design, and the desaturated, post-apocalyptic palette gives the world real texture. Narratively, however, the film is rather slight, more mood piece than fully realised story.",No,visuals;story,13/3/2025 15:05
-s5,21,sample_user_05,"loved how ben flips it on micky at the end, sets him up with the casino security guy and micky opens the bag to find chocolate coins lol. shame cole still takes all the money",Yes,ending;funny,19/7/2026 21:03
-s7,122,sample_user_06,"the drug run and the car crash are just the setup, the real horror is that the hospital they wake up in is basically a trap in the middle of nowhere. super gory",Yes,scary,3/8/2026 11:14
-s8,187,sample_user_08,"heavy watch, poor teacher",No,characters,8/10/2026 9:36
-s8,187,sample_user_01,important topic but so bleak,No,story;emotional,23/8/2026 20:03
-s9,706,sample_user_09,the patient is creepy af,No,characters;scary,15/8/2025 9:35
-s10,1920,sample_user_10,same old haunted house plot,No,story;scary,17/5/2025 17:26
-s10,1920,sample_user_03,"the ghost turns out to be a british spy who was hanged in the house, and lisa gets possessed because she has gayatri's soul. ending with the hanuman chalisa exorcism is so bollywood",Yes,scary;ending,28/5/2025 11:36
-s11,1922,sample_user_04,super slow but vibes,No,pacing,12/11/2025 13:06
-s11,1922,sample_user_11,"A bleak, methodical character study whose deliberate pacing mirrors its protagonist's moral decay. The film's Gothic atmosphere is impeccably sustained, even if its confessional framing renders the outcome somewhat inevitable.",No,emotional;characters;pacing,19/8/2026 14:23
-s14,"2,215",sample_user_02,who knew a running doc could make me tear 🥲,No,emotional,10/4/2025 10:36
-s15,3022,sample_user_05,"astronauts slowly losing it in space, lowkey disturbing",No,pacing;scary,3/3/2025 14:31
-s15,3022,sample_user_08,cool idea but super slow,No,story;pacing,29/6/2026 21:49
-s16,Oct-01,sample_user_06,"solid detective thriller, love the 1960 nigeria setting",No,visuals,18/11/2025 22:37
-s18,22-Jul,sample_user_09,hard to watch but so important. based on a true story and it shows,No,emotional;realistic;story,10/4/2026 19:19
-s18,22-Jul,sample_user_02,the survivor's recovery hit hard,No,emotional,12/9/2025 13:44
-s18,22-Jul,sample_user_11,"The film's final movement, Viljar's testimony in court despite the bullet fragments left in his brain, delivers a hard-won catharsis, set against Breivik's maximum sentence. It is quietly devastating.",Yes,emotional,7/9/2025 10:36
-s19,15-Aug,sample_user_10,"chaotic chawl comedy, really wholesome ending",No,funny;emotional;ending,4/11/2025 23:56
-s21,Kuch Bheege Alfaaz,sample_user_01,"she's been talking to RJ alfaz this whole time without knowing, the radio host she's literally a fan of. cute but kinda slow",Yes,pacing,18/12/2025 22:18
-s22,Goli Soda 2,sample_user_03,"lots of fights, the three leads carry it",No,action;characters,16/9/2026 10:07
-s23,Maj Rati Keteki,sample_user_07,"too many flashbacks, lost me halfway",No,story;pacing,9/6/2026 21:10
-s24,Mayurakshi,sample_user_04,"quiet father-son drama, really touching",No,characters;emotional,17/12/2025 12:59
-s28,#Alive,sample_user_05,zombie lockdown movie hits different after covid,No,scary;realistic,16/5/2026 21:02
-s28,#Alive,sample_user_06,"must watch, tense the whole way",No,pacing,21/3/2025 18:21
-s28,#Alive,sample_user_01,"peak ending, helicopters come and actually rescue joon-woo and yoo-bin from the rooftop and his hashtag goes from #StayAlive to #Alive",Yes,ending,25/12/2025 23:37
-s28,#Alive,sample_user_11,"An efficient chamber piece that repurposes the zombie genre for the age of digital isolation. The apartment-bound mise-en-scène sustains tension admirably, even as the third act retreats into more familiar survival tropes.",No,scary;pacing;ending,13/4/2026 10:53
-s29,#AnneFrank - Parallel Stories,sample_user_08,"very moving, the survivors' stories stay with you",No,emotional;story,6/4/2025 16:30
-s32,#FriendButMarried,sample_user_07,friend zone pain is too real lol,No,realistic;funny,8/3/2025 9:46
-s32,#FriendButMarried,sample_user_09,"sweet romance, ending hurts tho",No,emotional;ending,14/11/2025 22:18
-s33,#FriendButMarried 2,sample_user_07,"after ayu dumped her fiancé for ditto in part 1, the sequel is just them dealing with marriage and the surprise pregnancy. more mature, i liked it!",Yes,story,31/1/2026 19:01
-s34,#realityhigh,sample_user_10,"typical teen comedy, nothing new",No,story;funny,18/4/2026 19:10
-s34,#realityhigh,sample_user_02,the social media drama was funny!,No,funny,18/9/2026 11:31
-s35,#Roxy,sample_user_03,"cyrano vibes for real, cyrus literally coaches christian on how to talk to roxy while his cousin secretly puts his love letter in her locker",Yes,,2/3/2025 14:49
-s37,#Selfie,sample_user_05,"fun road trip vibes, the girls are hilarious",No,funny;characters,22/10/2025 12:47
-s38,#Selfie 69,sample_user_08,the bet idea is dumb but i laughed,No,story;funny,11/9/2025 20:25
-s40,"¡Ay, mi madre!",sample_user_01,the will's instructions are so random lol,No,funny,24/5/2026 10:10
-s40,"¡Ay, mi madre!",sample_user_06,dark comedy done right!,No,funny,5/4/2026 20:35
-s41,Çarsi Pazar,sample_user_04,"the rival barber cemil literally teams up with the mall developer to take the bath house, and kahraman has to pay off his late dad's debts to keep it",Yes,,12/10/2025 12:52
-s42,Ég man þig,sample_user_09,icelandic horror that's genuinely creepy 👻,No,scary,17/3/2026 16:45
-s42,Ég man þig,sample_user_03,slow but the twist at the end got me,No,pacing;story;ending,2/3/2026 19:43
-s43,Çok Filim Hareketler Bunlar,sample_user_10,"relatable holiday fails, mosquitoes are the real villain",No,realistic,25/1/2026 15:09
-s44,Òlòtūré,sample_user_02,"Very hard to watch but important. The way it exposes human trafficking in Lagos is brutal and honest, and it stays with you long after.",No,emotional,26/3/2025 13:09
-s45,Æon Flux,sample_user_06,just horrible,No,,26/8/2025 15:00
-s45,Æon Flux,sample_user_10,cool acrobatic fights but the plot makes zero sense,No,action;story,12/5/2026 13:16
-s47,1 Chance 2 Dance,sample_user_05,cringey love triangle but the dancing is nice!,No,,16/10/2025 8:09
-s48,1 Mile to You,sample_user_03,"Honestly didn't expect much but this one really got to me. He loses both his girlfriend and his best friend in the bus accident, and the running becomes his way of seeing her again in hazy flashbacks. The final race where he sees the bus on the track and then chases a real bus out of the parking lot is such a weird but powerful ending. A bit slow in the middle, but worth it.",Yes,story;action;ending,6/3/2026 19:39
-s49,10 Days in Sun City,sample_user_08,"funny pageant chaos, light watch",No,funny,3/8/2026 18:08
-s50,10 jours en or,sample_user_09,"road trip with a kid, cute and heartwarming!",No,emotional,12/6/2026 9:29
-s50,10 jours en or,sample_user_04,predictable but sweet,No,story;emotional,27/7/2026 20:25
-s51,"10,000 B.C.",sample_user_01,boring,No,pacing,13/2/2026 20:06
-s51,"10,000 B.C.",sample_user_07,the mammoths look good but the story is so generic,No,visuals;story,9/5/2026 20:03
-s55,100 Meters,sample_user_10,"One of the more inspiring sports movies I've seen. Training for an Ironman after being diagnosed with multiple sclerosis sounds unbelievable, but the movie makes it feel real and personal. The relationship with his cranky father-in-law adds a lot of humour and heart, and their arguments were some of my favourite parts. Definitely recommend if you like underdog stories.",No,emotional;realistic;characters,15/7/2025 10:13
-s55,100 Meters,sample_user_06,so inspiring!! 🏃,No,emotional,28/3/2026 13:07
-s58,100% Halal,sample_user_05,"interesting topic, a bit draggy",No,story;pacing,15/12/2025 9:06
-s60,1000 Rupee Note,sample_user_02,"the politician hands her a bunch of 1000 rupee notes after hearing her story, and suddenly the whole village wants money from her. the trip to town goes badly wrong because of that cash",Yes,story,1/1/2025 12:34
-s61,12 ROUND GUN,sample_user_03,"boxing drama with a lot of heart, the grief over his son feels real",No,emotional;realistic,14/4/2025 19:39
-s61,12 ROUND GUN,sample_user_08,slow and kinda forgettable,No,pacing,27/1/2025 10:55
-s63,13 Cameras,sample_user_05,hidden cameras in your rental?? genuinely creepy,No,scary,1/8/2025 20:09
-s63,13 Cameras,sample_user_10,"good idea, terrible acting",No,story;acting,12/10/2026 16:22
-s66,13 Sins,sample_user_11,"A darkly satirical premise, essentially a morality play staged as a game show, that escalates with grim ingenuity. Its commentary on economic desperation is blunt rather than incisive, but the mounting tension is expertly calibrated.",No,funny;story;pacing,9/9/2026 19:30
-s66,13 Sins,sample_user_01,"each challenge gets more messed up, couldn't look away!",No,,6/5/2025 11:54
-s69,14 Blades,sample_user_06,"sword fights are so smooth, but qinglong dies after killing tuo-tuo in the final duel, the last shot of qiao hua seeing someone like him in the desert though...",Yes,action,15/5/2026 22:30
-s70,14 Cameras,sample_user_04,worse than the first one tbh,No,overrated,11/5/2026 17:05
-s72,16 Blocks,sample_user_09,"simple premise but the tension holds up, solid action",No,story;pacing;action,28/5/2025 11:47
-s73,17 Again,sample_user_02,the high school do-over idea is so fun 😂,No,story;funny,17/12/2025 16:30
-s73,17 Again,sample_user_07,cheesy but rewatchable,No,rewatchable,15/6/2025 8:13
-s73,17 Again,sample_user_10,funny but the dad-in-high-school stuff gets weird,No,funny,25/6/2026 19:09
-s74,18 Presents,sample_user_05,"I was not ready for this one. The idea of a mother leaving 18 gifts for every birthday she won't be around for is already heartbreaking, and the movie handles it gently without being overly dramatic. Some parts move slowly, but the emotional moments really land. Bring tissues.",No,story;emotional;pacing,11/7/2026 8:48
-s75,1898: Our Last Men in the Philippines,sample_user_11,"A curious, almost absurdist war film that captures the attritional futility of a colonial outpost under siege. The cinematography is handsome, yet the episodic structure dilutes the sense of escalating stakes.",No,funny;action;visuals,25/6/2026 17:41
-s76,1BR,sample_user_06,"the apartment community is so cult-like, creepy af",No,scary,4/4/2025 16:33
-s77,1st Summoning,sample_user_08,"student filmmaker horror, not scary at all. the warehouse cult turns out to be real and gets the students in the end, saw it coming",Yes,scary;ending,11/1/2026 13:22
-s78,2 Alone in Paris,sample_user_01,"silly french comedy, the cop vs thief chase is funny",No,funny;action,17/8/2025 18:40
-s79,2 States,sample_user_03,relatable for anyone with strict parents lol,No,realistic;funny,17/8/2025 14:51
-s79,2 States,sample_user_09,the family drama drags but krish's dad finally apologising to his mum at the wedding got me. ending with twins and krish writing the book is cute,Yes,pacing;ending,3/9/2025 20:47
-s80,20 Feet From Stardom,sample_user_11,"A deserved Oscar winner that restores overlooked artistry to the centre of the frame. The documentary's archival assembly is superb, and it articulates, with real poignancy, the gap between talent and recognition.",No,emotional,21/8/2025 14:33
-s80,20 Feet From Stardom,sample_user_04,"the singing is incredible!! didn't know darlene love sang hits that got credited to the crystals, or that merry clayton was the voice on gimme shelter",Yes,music,20/5/2026 19:46
-s83,2036 Origin Unknown,sample_user_05,interesting AI mystery but the low budget shows,No,story;visuals,30/1/2025 8:50
-s84,20th Century Women,sample_user_11,"A wistful, impressionistic portrait of a household in flux, built on finely textured ensemble performances. Its loose, episodic construction and period voice-over will frustrate some, but its emotional intelligence is considerable.",No,acting;emotional,14/10/2025 23:16
-s84,20th Century Women,sample_user_02,"quiet movie, great cast. the epilogue telling us dorothea dies of lung cancer in 1999 and jamie can't explain her to his own son broke me",Yes,acting;emotional,18/7/2025 19:28
-s85,21 & Over,sample_user_10,"dumb fun, perfect for a lazy night",No,funny,24/12/2025 19:05
-s89,2307: Winter's Dream,sample_user_06,cool frozen future setting but cheap looking,No,visuals,14/8/2025 11:14
-s90,24 Hours to Live,sample_user_07,generic hitman revenge but the action is decent,No,story;action,27/4/2026 14:21
-s91,25 Kille,sample_user_09,"brothers fighting for their land, very dramatic",No,characters,29/7/2025 23:39
-s92,26 Years,sample_user_11,"A politically charged revenge thriller that channels collective trauma into genre catharsis. Its moral clarity occasionally tips into melodrama, yet the film remains a potent reckoning with Gwangju's unhealed wounds.",No,emotional,17/9/2026 8:30
-s92,26 Years,sample_user_03,"intense and emotional, didn't know much about gwangju before this",No,emotional,31/10/2026 19:51
-s93,"27, el club de los malditos",sample_user_08,"weird mix of comedy and mystery, kinda works?",No,funny;story,21/10/2026 10:53
-s94,27: Gone Too Soon,sample_user_04,"sad but interesting look at the 27 club, didn't know brian jones drowned in his own swimming pool",Yes,emotional;music,3/5/2025 20:50
-s95,28 Days,sample_user_01,surprisingly touching rehab comedy,No,emotional;funny,24/7/2025 23:56
-s97,3 Days to Kill,sample_user_05,"action is fine, story is all over the place",No,action;story,2/7/2025 21:50
-s99,3 Generations,sample_user_02,really sensitive portrayal of a family adjusting to ray's transition. the three generations dynamic is the best part,No,characters,14/10/2026 18:05
-s100,3 Heroines,sample_user_10,"inspiring archery story! they actually win indonesia's first ever olympic medal in seoul, and the coach was banned from the 1980 games himself",Yes,emotional;story,10/2/2026 22:25
-s101,3 Idiots,sample_user_11,"A crowd-pleasing campus comedy whose satire of rote learning and institutional pressure retains genuine bite. Tonal shifts between broad slapstick and melodrama are abrupt, but the central friendship is irresistibly warm.",No,funny;story;characters,28/3/2025 13:10
-s101,3 Idiots,sample_user_03,all is well!! classic,No,rewatchable,11/5/2025 8:09
-s101,3 Idiots,sample_user_06,"Honestly one of my favourite Indian movies. It's really funny but it also says a lot about the pressure students face in the education system, which hit close to home. The friendship between the three main characters is what makes it special. It's a bit long, but I never got bored and I've rewatched it so many times.",No,funny;characters;pacing,28/8/2026 22:51
-s101,3 Idiots,sample_user_09,peak comedy,No,funny,30/5/2025 23:42
-s103,3 Türken & ein Baby,sample_user_07,"chaotic bridal shop comedy, some jokes miss",No,funny,25/12/2025 12:35
-s104,30 Days of Luxury,sample_user_04,prison break to save a nightclub? lol ok,No,funny,16/7/2026 12:01
-s105,30 Minutes or Less,sample_user_08,pizza guy forced into a bank robbery 🍕 so dumb but funny,No,funny,15/1/2025 11:33
-s106,300 Miles to Heaven,sample_user_05,sad and quiet refugee story. they make it to denmark hiding under a truck but the ending where their dad tells them to stay abroad and never come back hurts,Yes,emotional;story;ending,23/5/2025 21:55
-s107,365 Days,sample_user_10,just horrible,No,,19/7/2025 14:01
-s107,365 Days,sample_user_02,"glamorises a really toxic relationship, not okay",No,characters,15/9/2025 14:18
-s107,365 Days,sample_user_06,"only watched because of the hype, so overrated",No,overrated,29/5/2026 15:48
-s108,37 Seconds,sample_user_11,"A tender, quietly radical coming-of-age drama that grants its heroine an agency rarely afforded on screen. Its naturalistic performances and unhurried rhythm cultivate an intimacy that lingers well beyond the credits.",No,characters;acting;pacing,24/8/2026 18:16
-s110,40 Sticks,sample_user_09,"survival thriller in the forest, tense but messy",No,pacing,12/7/2026 21:53
-s111,42 Grams,sample_user_01,food doc that's more about the stress of running a restaurant. they win two michelin stars but the end titles say the couple divorced and the restaurant closed,Yes,ending;characters,15/5/2025 9:58
-s114,48 Christmas Wishes,sample_user_03,cute christmas movie for kids 🎄,No,family,29/12/2025 22:42
-s115,4L,sample_user_04,"the road trip to mali is beautiful, nice friendship story",No,visuals;characters;story,21/8/2026 21:52
-s116,4th Man Out,sample_user_07,"wholesome bro comedy, the friends are hilarious",No,emotional;funny;characters,29/5/2026 12:34
-s117,4th Republic,sample_user_08,"political thriller that feels very real. the votes from the biggest local government get cancelled after the electoral officers are massacred, so mabel takes it to the tribunal",Yes,realistic,5/6/2025 8:55
-s119,5 Flights Up,sample_user_10,"sweet older couple drama, very chill",No,emotional;characters,27/3/2026 13:38
-s120,5 Star Christmas,sample_user_05,"silly political comedy, mid",No,funny,5/1/2025 12:11
-s121,5 to 7,sample_user_02,"beautiful nyc romance but the ending... she leaves him with a letter, then years later at the guggenheim she secretly shows she's still wearing his ring 😭",Yes,visuals;ending,25/5/2025 23:39
-s122,50 First Dates,sample_user_03,"the memory loss romance is so sweet, i rewatch it every year",No,emotional;rewatchable,4/5/2025 9:20
-s122,50 First Dates,sample_user_09,funny but some jokes are kinda dated,No,funny,15/6/2026 23:50
-s122,50 First Dates,sample_user_06,"classic romcom! the ending where lucy watches the tape and wakes up on the boat in alaska, married with a daughter, gets me every time",Yes,rewatchable;funny;ending,19/4/2025 9:15
-s123,50/50,sample_user_11,Navigates the treacherous tonal terrain of the cancer comedy with remarkable deftness. The screenplay's candour and the lead's understated performance ensure the humour never trivialises the stakes.,No,funny;story;acting,15/7/2025 16:02
-s123,50/50,sample_user_01,funny and sad at the same time,No,funny;emotional,11/4/2025 22:35
-s124,5CM,sample_user_04,"makes me wanna go hiking with my friends, the mountain views are nice",No,characters;visuals,29/1/2025 10:28
-s125,5Gang,sample_user_08,random but entertaining,No,,30/11/2025 14:44
-s126,6 Balloons,sample_user_05,painful and very real look at addiction,No,emotional;realistic,11/10/2025 22:32
-s127,6 Days,sample_user_11,"A taut, procedurally rigorous siege thriller that privileges tactical detail over spectacle. The cross-cutting between negotiators and soldiers builds commendable suspense, though characterisation remains schematic.",No,action,1/7/2026 23:32
-s127,6 Days,sample_user_07,tense from start to end,No,pacing,11/9/2025 16:59
-s128,6 Underground,sample_user_09,"lots of boring chase sequences, but the ending where they drop the dictator into the refugee camp and the crowd turns on him was crazy",Yes,pacing;action;ending,27/7/2026 14:53
-s128,6 Underground,sample_user_10,"explosions everywhere, fun but mindless",No,action;funny,4/4/2026 12:26
-s128,6 Underground,sample_user_03,the opening car chase is crazy!,No,action,5/5/2025 20:28
-s129,6 Years,sample_user_06,"toxic couple, frustrating to watch. dan gets arrested after a fight and in the end he can't even say he wants to spend his life with mel, so they break up",Yes,characters;action;ending,20/11/2025 10:42
-s130,6-5=2,sample_user_01,"mountain trek horror, kinda predictable",No,scary;story,4/9/2025 21:04
-s132,68 Kill,sample_user_07,"violent and chaotic, wild ride. chip, the 'nice guy', ends up killing liza, her brother and monica, then drives off with all the money",Yes,action,6/8/2025 17:50
-s134,7 años,sample_user_09,the whole movie is basically one long argument in a room but so tense,No,pacing,6/5/2025 12:45
-s136,7 Din Mohabbat In,sample_user_05,genie romcom is silly but cute,No,funny,21/10/2026 19:09
-s137,7 Khoon Maaf,sample_user_11,"A sardonic, darkly comic chronicle of serial matrimony, anchored by a commanding central performance. The episodic structure grows repetitive, but its gleeful subversion of the wronged-wife archetype is bracing.",No,funny;acting,17/9/2025 12:29
-s137,7 Khoon Maaf,sample_user_02,"wild concept, she really keeps choosing the wrong men lol",No,story;funny,13/8/2025 11:25
-s144,90 ML,sample_user_10,"random party comedy, not my thing",No,funny,14/5/2026 13:42
-s145,93 Days,sample_user_04,"Based on a true story and it really shows how much the health workers sacrificed to stop Ebola from spreading in Lagos. Some parts are hard to watch, especially the hospital scenes, but that makes it feel more real. I learnt a lot from this and I have so much respect for the people involved.",No,realistic;story;emotional,18/8/2025 13:45
-s145,93 Days,sample_user_11,"A sober docudrama whose emotional weight rests on Dr Adadevoh's decision to quarantine Patrick Sawyer, a choice that contains the outbreak but ultimately costs her her own life. Its restraint is admirable, if occasionally inert.",Yes,realistic;emotional,18/3/2026 20:21
-s146,A 2nd Chance,sample_user_08,inspiring gymnastics story for kids,No,emotional;story;family,8/3/2026 14:22
-s148,A Babysitter's Guide to Monster Hunting,sample_user_06,fun halloween movie for the family 🎃,No,funny;family,23/11/2025 10:46
-s148,A Babysitter's Guide to Monster Hunting,sample_user_09,the monsters look a bit cheesy,No,visuals,10/1/2026 8:21
+s2,07:19,sample_user_01,ngl the earthquake was surreal,No,realistic,2025-11-28 12:25
+s2,07:19,sample_user_04,"too much waiting under rubble, kinda draggy",No,pacing,2026-10-29 09:04
+s3,23:59,sample_user_02,"plot twist: the ghost mum isn't the killer, it's her daughter's spirit 💀 the mum actually poisoned her as a kid. didn't see that coming",Yes,story;scary,2026-07-03 11:23
+s3,23:59,sample_user_11,"The late reveal that the vengeful spirit is the medium's poisoned daughter, not the medium herself, reframes the haunting as a tragedy of maternal guilt, though the present-day coda feels like an obligatory sequel hook.",Yes,scary;emotional;story,2026-08-20 09:58
+s4,9,sample_user_03,animation is peak,No,visuals,2026-06-04 14:02
+s4,9,sample_user_07,"cute robots, dark story",No,story,2025-03-30 21:26
+s4,9,sample_user_11,"The tactile, stitched-together character design is a triumph of production design, and the desaturated, post-apocalyptic palette gives the world real texture. Narratively, however, the film is rather slight, more mood piece than fully realised story.",No,visuals;story,2025-03-13 15:05
+s5,21,sample_user_05,"loved how ben flips it on micky at the end, sets him up with the casino security guy and micky opens the bag to find chocolate coins lol. shame cole still takes all the money",Yes,ending;funny,2026-07-19 21:03
+s7,122,sample_user_06,"the drug run and the car crash are just the setup, the real horror is that the hospital they wake up in is basically a trap in the middle of nowhere. super gory",Yes,scary,2026-08-03 11:14
+s8,187,sample_user_08,"heavy watch, poor teacher",No,characters,2026-10-08 09:36
+s8,187,sample_user_01,important topic but so bleak,No,story;emotional,2026-08-23 20:03
+s9,706,sample_user_09,the patient is creepy af,No,characters;scary,2025-08-15 09:35
+s10,1920,sample_user_10,same old haunted house plot,No,story;scary,2025-05-17 17:26
+s10,1920,sample_user_03,"the ghost turns out to be a british spy who was hanged in the house, and lisa gets possessed because she has gayatri's soul. ending with the hanuman chalisa exorcism is so bollywood",Yes,scary;ending,2025-05-28 11:36
+s11,1922,sample_user_04,super slow but vibes,No,pacing,2025-11-12 13:06
+s11,1922,sample_user_11,"A bleak, methodical character study whose deliberate pacing mirrors its protagonist's moral decay. The film's Gothic atmosphere is impeccably sustained, even if its confessional framing renders the outcome somewhat inevitable.",No,emotional;characters;pacing,2026-08-19 14:23
+s14,"2,215",sample_user_02,who knew a running doc could make me tear 🥲,No,emotional,2025-04-10 10:36
+s15,3022,sample_user_05,"astronauts slowly losing it in space, lowkey disturbing",No,pacing;scary,2025-03-03 14:31
+s15,3022,sample_user_08,cool idea but super slow,No,story;pacing,2026-06-29 21:49
+s16,Oct-01,sample_user_06,"solid detective thriller, love the 1960 nigeria setting",No,visuals,2025-11-18 22:37
+s18,22-Jul,sample_user_09,hard to watch but so important. based on a true story and it shows,No,emotional;realistic;story,2026-04-10 19:19
+s18,22-Jul,sample_user_02,the survivor's recovery hit hard,No,emotional,2025-09-12 13:44
+s18,22-Jul,sample_user_11,"The film's final movement, Viljar's testimony in court despite the bullet fragments left in his brain, delivers a hard-won catharsis, set against Breivik's maximum sentence. It is quietly devastating.",Yes,emotional,2025-09-07 10:36
+s19,15-Aug,sample_user_10,"chaotic chawl comedy, really wholesome ending",No,funny;emotional;ending,2025-11-04 23:56
+s21,Kuch Bheege Alfaaz,sample_user_01,"she's been talking to RJ alfaz this whole time without knowing, the radio host she's literally a fan of. cute but kinda slow",Yes,pacing,2025-12-18 22:18
+s22,Goli Soda 2,sample_user_03,"lots of fights, the three leads carry it",No,action;characters,2026-09-16 10:07
+s23,Maj Rati Keteki,sample_user_07,"too many flashbacks, lost me halfway",No,story;pacing,2026-06-09 21:10
+s24,Mayurakshi,sample_user_04,"quiet father-son drama, really touching",No,characters;emotional,2025-12-17 12:59
+s28,#Alive,sample_user_05,zombie lockdown movie hits different after covid,No,scary;realistic,2026-05-16 21:02
+s28,#Alive,sample_user_06,"must watch, tense the whole way",No,pacing,2025-03-21 18:21
+s28,#Alive,sample_user_01,"peak ending, helicopters come and actually rescue joon-woo and yoo-bin from the rooftop and his hashtag goes from #StayAlive to #Alive",Yes,ending,2025-12-25 23:37
+s28,#Alive,sample_user_11,"An efficient chamber piece that repurposes the zombie genre for the age of digital isolation. The apartment-bound mise-en-scène sustains tension admirably, even as the third act retreats into more familiar survival tropes.",No,scary;pacing;ending,2026-04-13 10:53
+s29,#AnneFrank - Parallel Stories,sample_user_08,"very moving, the survivors' stories stay with you",No,emotional;story,2025-04-06 16:30
+s32,#FriendButMarried,sample_user_07,friend zone pain is too real lol,No,realistic;funny,2025-03-08 09:46
+s32,#FriendButMarried,sample_user_09,"sweet romance, ending hurts tho",No,emotional;ending,2025-11-14 22:18
+s33,#FriendButMarried 2,sample_user_07,"after ayu dumped her fiancé for ditto in part 1, the sequel is just them dealing with marriage and the surprise pregnancy. more mature, i liked it!",Yes,story,2026-01-31 19:01
+s34,#realityhigh,sample_user_10,"typical teen comedy, nothing new",No,story;funny,2026-04-18 19:10
+s34,#realityhigh,sample_user_02,the social media drama was funny!,No,funny,2026-09-18 11:31
+s35,#Roxy,sample_user_03,"cyrano vibes for real, cyrus literally coaches christian on how to talk to roxy while his cousin secretly puts his love letter in her locker",Yes,,2025-03-02 14:49
+s37,#Selfie,sample_user_05,"fun road trip vibes, the girls are hilarious",No,funny;characters,2025-10-22 12:47
+s38,#Selfie 69,sample_user_08,the bet idea is dumb but i laughed,No,story;funny,2025-09-11 20:25
+s40,"¡Ay, mi madre!",sample_user_01,the will's instructions are so random lol,No,funny,2026-05-24 10:10
+s40,"¡Ay, mi madre!",sample_user_06,dark comedy done right!,No,funny,2026-04-05 20:35
+s41,Çarsi Pazar,sample_user_04,"the rival barber cemil literally teams up with the mall developer to take the bath house, and kahraman has to pay off his late dad's debts to keep it",Yes,,2025-10-12 12:52
+s42,Ég man þig,sample_user_09,icelandic horror that's genuinely creepy 👻,No,scary,2026-03-17 16:45
+s42,Ég man þig,sample_user_03,slow but the twist at the end got me,No,pacing;story;ending,2026-03-02 19:43
+s43,Çok Filim Hareketler Bunlar,sample_user_10,"relatable holiday fails, mosquitoes are the real villain",No,realistic,2026-01-25 15:09
+s44,Òlòtūré,sample_user_02,"Very hard to watch but important. The way it exposes human trafficking in Lagos is brutal and honest, and it stays with you long after.",No,emotional,2025-03-26 13:09
+s45,Æon Flux,sample_user_06,just horrible,No,,2025-08-26 15:00
+s45,Æon Flux,sample_user_10,cool acrobatic fights but the plot makes zero sense,No,action;story,2026-05-12 13:16
+s47,1 Chance 2 Dance,sample_user_05,cringey love triangle but the dancing is nice!,No,,2025-10-16 08:09
+s48,1 Mile to You,sample_user_03,"Honestly didn't expect much but this one really got to me. He loses both his girlfriend and his best friend in the bus accident, and the running becomes his way of seeing her again in hazy flashbacks. The final race where he sees the bus on the track and then chases a real bus out of the parking lot is such a weird but powerful ending. A bit slow in the middle, but worth it.",Yes,story;action;ending,2026-03-06 19:39
+s49,10 Days in Sun City,sample_user_08,"funny pageant chaos, light watch",No,funny,2026-08-03 18:08
+s50,10 jours en or,sample_user_09,"road trip with a kid, cute and heartwarming!",No,emotional,2026-06-12 09:29
+s50,10 jours en or,sample_user_04,predictable but sweet,No,story;emotional,2026-07-27 20:25
+s51,"10,000 B.C.",sample_user_01,boring,No,pacing,2026-02-13 20:06
+s51,"10,000 B.C.",sample_user_07,the mammoths look good but the story is so generic,No,visuals;story,2026-05-09 20:03
+s55,100 Meters,sample_user_10,"One of the more inspiring sports movies I've seen. Training for an Ironman after being diagnosed with multiple sclerosis sounds unbelievable, but the movie makes it feel real and personal. The relationship with his cranky father-in-law adds a lot of humour and heart, and their arguments were some of my favourite parts. Definitely recommend if you like underdog stories.",No,emotional;realistic;characters,2025-07-15 10:13
+s55,100 Meters,sample_user_06,so inspiring!! 🏃,No,emotional,2026-03-28 13:07
+s58,100% Halal,sample_user_05,"interesting topic, a bit draggy",No,story;pacing,2025-12-15 09:06
+s60,1000 Rupee Note,sample_user_02,"the politician hands her a bunch of 1000 rupee notes after hearing her story, and suddenly the whole village wants money from her. the trip to town goes badly wrong because of that cash",Yes,story,2025-01-01 12:34
+s61,12 ROUND GUN,sample_user_03,"boxing drama with a lot of heart, the grief over his son feels real",No,emotional;realistic,2025-04-14 19:39
+s61,12 ROUND GUN,sample_user_08,slow and kinda forgettable,No,pacing,2025-01-27 10:55
+s63,13 Cameras,sample_user_05,hidden cameras in your rental?? genuinely creepy,No,scary,2025-08-01 20:09
+s63,13 Cameras,sample_user_10,"good idea, terrible acting",No,story;acting,2026-10-12 16:22
+s66,13 Sins,sample_user_11,"A darkly satirical premise, essentially a morality play staged as a game show, that escalates with grim ingenuity. Its commentary on economic desperation is blunt rather than incisive, but the mounting tension is expertly calibrated.",No,funny;story;pacing,2026-09-09 19:30
+s66,13 Sins,sample_user_01,"each challenge gets more messed up, couldn't look away!",No,,2025-05-06 11:54
+s69,14 Blades,sample_user_06,"sword fights are so smooth, but qinglong dies after killing tuo-tuo in the final duel, the last shot of qiao hua seeing someone like him in the desert though...",Yes,action,2026-05-15 22:30
+s70,14 Cameras,sample_user_04,worse than the first one tbh,No,overrated,2026-05-11 17:05
+s72,16 Blocks,sample_user_09,"simple premise but the tension holds up, solid action",No,story;pacing;action,2025-05-28 11:47
+s73,17 Again,sample_user_02,the high school do-over idea is so fun 😂,No,story;funny,2025-12-17 16:30
+s73,17 Again,sample_user_07,cheesy but rewatchable,No,rewatchable,2025-06-15 08:13
+s73,17 Again,sample_user_10,funny but the dad-in-high-school stuff gets weird,No,funny,2026-06-25 19:09
+s74,18 Presents,sample_user_05,"I was not ready for this one. The idea of a mother leaving 18 gifts for every birthday she won't be around for is already heartbreaking, and the movie handles it gently without being overly dramatic. Some parts move slowly, but the emotional moments really land. Bring tissues.",No,story;emotional;pacing,2026-07-11 08:48
+s75,1898: Our Last Men in the Philippines,sample_user_11,"A curious, almost absurdist war film that captures the attritional futility of a colonial outpost under siege. The cinematography is handsome, yet the episodic structure dilutes the sense of escalating stakes.",No,funny;action;visuals,2026-06-25 17:41
+s76,1BR,sample_user_06,"the apartment community is so cult-like, creepy af",No,scary,2025-04-04 16:33
+s77,1st Summoning,sample_user_08,"student filmmaker horror, not scary at all. the warehouse cult turns out to be real and gets the students in the end, saw it coming",Yes,scary;ending,2026-01-11 13:22
+s78,2 Alone in Paris,sample_user_01,"silly french comedy, the cop vs thief chase is funny",No,funny;action,2025-08-17 18:40
+s79,2 States,sample_user_03,relatable for anyone with strict parents lol,No,realistic;funny,2025-08-17 14:51
+s79,2 States,sample_user_09,the family drama drags but krish's dad finally apologising to his mum at the wedding got me. ending with twins and krish writing the book is cute,Yes,pacing;ending,2025-09-03 20:47
+s80,20 Feet From Stardom,sample_user_11,"A deserved Oscar winner that restores overlooked artistry to the centre of the frame. The documentary's archival assembly is superb, and it articulates, with real poignancy, the gap between talent and recognition.",No,emotional,2025-08-21 14:33
+s80,20 Feet From Stardom,sample_user_04,"the singing is incredible!! didn't know darlene love sang hits that got credited to the crystals, or that merry clayton was the voice on gimme shelter",Yes,music,2026-05-20 19:46
+s83,2036 Origin Unknown,sample_user_05,interesting AI mystery but the low budget shows,No,story;visuals,2025-01-30 08:50
+s84,20th Century Women,sample_user_11,"A wistful, impressionistic portrait of a household in flux, built on finely textured ensemble performances. Its loose, episodic construction and period voice-over will frustrate some, but its emotional intelligence is considerable.",No,acting;emotional,2025-10-14 23:16
+s84,20th Century Women,sample_user_02,"quiet movie, great cast. the epilogue telling us dorothea dies of lung cancer in 1999 and jamie can't explain her to his own son broke me",Yes,acting;emotional,2025-07-18 19:28
+s85,21 & Over,sample_user_10,"dumb fun, perfect for a lazy night",No,funny,2025-12-24 19:05
+s89,2307: Winter's Dream,sample_user_06,cool frozen future setting but cheap looking,No,visuals,2025-08-14 11:14
+s90,24 Hours to Live,sample_user_07,generic hitman revenge but the action is decent,No,story;action,2026-04-27 14:21
+s91,25 Kille,sample_user_09,"brothers fighting for their land, very dramatic",No,characters,2025-07-29 23:39
+s92,26 Years,sample_user_11,"A politically charged revenge thriller that channels collective trauma into genre catharsis. Its moral clarity occasionally tips into melodrama, yet the film remains a potent reckoning with Gwangju's unhealed wounds.",No,emotional,2026-09-17 08:30
+s92,26 Years,sample_user_03,"intense and emotional, didn't know much about gwangju before this",No,emotional,2026-10-31 19:51
+s93,"27, el club de los malditos",sample_user_08,"weird mix of comedy and mystery, kinda works?",No,funny;story,2026-10-21 10:53
+s94,27: Gone Too Soon,sample_user_04,"sad but interesting look at the 27 club, didn't know brian jones drowned in his own swimming pool",Yes,emotional;music,2025-05-03 20:50
+s95,28 Days,sample_user_01,surprisingly touching rehab comedy,No,emotional;funny,2025-07-24 23:56
+s97,3 Days to Kill,sample_user_05,"action is fine, story is all over the place",No,action;story,2025-07-02 21:50
+s99,3 Generations,sample_user_02,really sensitive portrayal of a family adjusting to ray's transition. the three generations dynamic is the best part,No,characters,2026-10-14 18:05
+s100,3 Heroines,sample_user_10,"inspiring archery story! they actually win indonesia's first ever olympic medal in seoul, and the coach was banned from the 1980 games himself",Yes,emotional;story,2026-02-10 22:25
+s101,3 Idiots,sample_user_11,"A crowd-pleasing campus comedy whose satire of rote learning and institutional pressure retains genuine bite. Tonal shifts between broad slapstick and melodrama are abrupt, but the central friendship is irresistibly warm.",No,funny;story;characters,2025-03-28 13:10
+s101,3 Idiots,sample_user_03,all is well!! classic,No,rewatchable,2025-05-11 08:09
+s101,3 Idiots,sample_user_06,"Honestly one of my favourite Indian movies. It's really funny but it also says a lot about the pressure students face in the education system, which hit close to home. The friendship between the three main characters is what makes it special. It's a bit long, but I never got bored and I've rewatched it so many times.",No,funny;characters;pacing,2026-08-28 22:51
+s101,3 Idiots,sample_user_09,peak comedy,No,funny,2025-05-30 23:42
+s103,3 Türken & ein Baby,sample_user_07,"chaotic bridal shop comedy, some jokes miss",No,funny,2025-12-25 12:35
+s104,30 Days of Luxury,sample_user_04,prison break to save a nightclub? lol ok,No,funny,2026-07-16 12:01
+s105,30 Minutes or Less,sample_user_08,pizza guy forced into a bank robbery 🍕 so dumb but funny,No,funny,2025-01-15 11:33
+s106,300 Miles to Heaven,sample_user_05,sad and quiet refugee story. they make it to denmark hiding under a truck but the ending where their dad tells them to stay abroad and never come back hurts,Yes,emotional;story;ending,2025-05-23 21:55
+s107,365 Days,sample_user_10,just horrible,No,,2025-07-19 14:01
+s107,365 Days,sample_user_02,"glamorises a really toxic relationship, not okay",No,characters,2025-09-15 14:18
+s107,365 Days,sample_user_06,"only watched because of the hype, so overrated",No,overrated,2026-05-29 15:48
+s108,37 Seconds,sample_user_11,"A tender, quietly radical coming-of-age drama that grants its heroine an agency rarely afforded on screen. Its naturalistic performances and unhurried rhythm cultivate an intimacy that lingers well beyond the credits.",No,characters;acting;pacing,2026-08-24 18:16
+s110,40 Sticks,sample_user_09,"survival thriller in the forest, tense but messy",No,pacing,2026-07-12 21:53
+s111,42 Grams,sample_user_01,food doc that's more about the stress of running a restaurant. they win two michelin stars but the end titles say the couple divorced and the restaurant closed,Yes,ending;characters,2025-05-15 09:58
+s114,48 Christmas Wishes,sample_user_03,cute christmas movie for kids 🎄,No,family,2025-12-29 22:42
+s115,4L,sample_user_04,"the road trip to mali is beautiful, nice friendship story",No,visuals;characters;story,2026-08-21 21:52
+s116,4th Man Out,sample_user_07,"wholesome bro comedy, the friends are hilarious",No,emotional;funny;characters,2026-05-29 12:34
+s117,4th Republic,sample_user_08,"political thriller that feels very real. the votes from the biggest local government get cancelled after the electoral officers are massacred, so mabel takes it to the tribunal",Yes,realistic,2025-06-05 08:55
+s119,5 Flights Up,sample_user_10,"sweet older couple drama, very chill",No,emotional;characters,2026-03-27 13:38
+s120,5 Star Christmas,sample_user_05,"silly political comedy, mid",No,funny,2025-01-05 12:11
+s121,5 to 7,sample_user_02,"beautiful nyc romance but the ending... she leaves him with a letter, then years later at the guggenheim she secretly shows she's still wearing his ring 😭",Yes,visuals;ending,2025-05-25 23:39
+s122,50 First Dates,sample_user_03,"the memory loss romance is so sweet, i rewatch it every year",No,emotional;rewatchable,2025-05-04 09:20
+s122,50 First Dates,sample_user_09,funny but some jokes are kinda dated,No,funny,2026-06-15 23:50
+s122,50 First Dates,sample_user_06,"classic romcom! the ending where lucy watches the tape and wakes up on the boat in alaska, married with a daughter, gets me every time",Yes,rewatchable;funny;ending,2025-04-19 09:15
+s123,50/50,sample_user_11,Navigates the treacherous tonal terrain of the cancer comedy with remarkable deftness. The screenplay's candour and the lead's understated performance ensure the humour never trivialises the stakes.,No,funny;story;acting,2025-07-15 16:02
+s123,50/50,sample_user_01,funny and sad at the same time,No,funny;emotional,2025-04-11 22:35
+s124,5CM,sample_user_04,"makes me wanna go hiking with my friends, the mountain views are nice",No,characters;visuals,2025-01-29 10:28
+s125,5Gang,sample_user_08,random but entertaining,No,,2025-11-30 14:44
+s126,6 Balloons,sample_user_05,painful and very real look at addiction,No,emotional;realistic,2025-10-11 22:32
+s127,6 Days,sample_user_11,"A taut, procedurally rigorous siege thriller that privileges tactical detail over spectacle. The cross-cutting between negotiators and soldiers builds commendable suspense, though characterisation remains schematic.",No,action,2026-07-01 23:32
+s127,6 Days,sample_user_07,tense from start to end,No,pacing,2025-09-11 16:59
+s128,6 Underground,sample_user_09,"lots of boring chase sequences, but the ending where they drop the dictator into the refugee camp and the crowd turns on him was crazy",Yes,pacing;action;ending,2026-07-27 14:53
+s128,6 Underground,sample_user_10,"explosions everywhere, fun but mindless",No,action;funny,2026-04-04 12:26
+s128,6 Underground,sample_user_03,the opening car chase is crazy!,No,action,2025-05-05 20:28
+s129,6 Years,sample_user_06,"toxic couple, frustrating to watch. dan gets arrested after a fight and in the end he can't even say he wants to spend his life with mel, so they break up",Yes,characters;action;ending,2025-11-20 10:42
+s130,6-5=2,sample_user_01,"mountain trek horror, kinda predictable",No,scary;story,2025-09-04 21:04
+s132,68 Kill,sample_user_07,"violent and chaotic, wild ride. chip, the 'nice guy', ends up killing liza, her brother and monica, then drives off with all the money",Yes,action,2025-08-06 17:50
+s134,7 años,sample_user_09,the whole movie is basically one long argument in a room but so tense,No,pacing,2025-05-06 12:45
+s136,7 Din Mohabbat In,sample_user_05,genie romcom is silly but cute,No,funny,2026-10-21 19:09
+s137,7 Khoon Maaf,sample_user_11,"A sardonic, darkly comic chronicle of serial matrimony, anchored by a commanding central performance. The episodic structure grows repetitive, but its gleeful subversion of the wronged-wife archetype is bracing.",No,funny;acting,2025-09-17 12:29
+s137,7 Khoon Maaf,sample_user_02,"wild concept, she really keeps choosing the wrong men lol",No,story;funny,2025-08-13 11:25
+s144,90 ML,sample_user_10,"random party comedy, not my thing",No,funny,2026-05-14 13:42
+s145,93 Days,sample_user_04,"Based on a true story and it really shows how much the health workers sacrificed to stop Ebola from spreading in Lagos. Some parts are hard to watch, especially the hospital scenes, but that makes it feel more real. I learnt a lot from this and I have so much respect for the people involved.",No,realistic;story;emotional,2025-08-18 13:45
+s145,93 Days,sample_user_11,"A sober docudrama whose emotional weight rests on Dr Adadevoh's decision to quarantine Patrick Sawyer, a choice that contains the outbreak but ultimately costs her her own life. Its restraint is admirable, if occasionally inert.",Yes,realistic;emotional,2026-03-18 20:21
+s146,A 2nd Chance,sample_user_08,inspiring gymnastics story for kids,No,emotional;story;family,2026-03-08 14:22
+s148,A Babysitter's Guide to Monster Hunting,sample_user_06,fun halloween movie for the family 🎃,No,funny;family,2025-11-23 10:46
+s148,A Babysitter's Guide to Monster Hunting,sample_user_09,the monsters look a bit cheesy,No,visuals,2026-01-10 08:21

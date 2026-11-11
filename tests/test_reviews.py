@@ -15,6 +15,7 @@ from db.mongodb import (
     get_movie_reviews,
     get_user_reviews,
     get_review_count,
+    get_reviews_by_title,
 )
 
 
@@ -175,6 +176,22 @@ class TestReviews(unittest.TestCase):
 
         self.assertEqual(len(get_user_reviews(self.user1)), 2)
         self.assertEqual(get_review_count(self.movie_id), before + 1)
+
+    def test_reviews_by_title(self):
+        # s10 is "1920"; s2 is "07:19"
+        add_review(self.user1, self.movie_id, "Title search review")
+        add_review(self.user2, self.other_movie_id, "Other movie review")
+
+        texts = []
+        for review in get_reviews_by_title("1920", limit=100):
+            texts.append(review["review_text"])
+            self.assertEqual(review["title"], "1920")
+        self.assertIn("Title search review", texts)
+        self.assertNotIn("Other movie review", texts)
+
+        self.assertEqual(get_reviews_by_title("no movie has this title zzz"), [])
+        with self.assertRaises(ValueError):
+            get_reviews_by_title("   ")
 
     def test_invalid_browse_parameters_raise(self):
         with self.assertRaises(ValueError):
