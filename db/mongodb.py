@@ -3,7 +3,7 @@ import os
 from datetime import datetime, timezone
 
 from dotenv import load_dotenv
-from pymongo import MongoClient, ASCENDING, DESCENDING, TEXT
+from pymongo import MongoClient, ASCENDING, DESCENDING
 from pymongo.errors import DuplicateKeyError, WriteError
 
 from db.mariadb import get_connection
@@ -72,8 +72,9 @@ def setup_reviews_collection(reset=False):
     reviews.create_index([("movie_id", ASCENDING), ("created_at", DESCENDING)],
                          name="movie_newest")
 
-    # Keyword search inside review text
-    reviews.create_index([("review_text", TEXT)], name="review_text_search")
+    # Old keyword-search index from an earlier version (no longer used)
+    if "review_text_search" in reviews.index_information():
+        reviews.drop_index("review_text_search")
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -225,7 +226,7 @@ def delete_review(user_id, movie_id):
 
 
 # ------------------------------------------------------------------------------------------------------
-# Browsing and searching reviews
+# Browsing reviews
 
 # Retrieves the reviews for a movie.
 # sort_by: "newest" or "oldest". hide_spoilers=True leaves out spoiler reviews.
@@ -271,30 +272,51 @@ def get_user_reviews(user_id, limit=20, offset=0):
     return result
 
 
+# Finds reviews by movie title (partial, not case-sensitive), newest first.
+# Titles live in the MariaDB movies table, so the matching movie_ids are looked up there first,
+# then MongoDB returns their reviews. Each review gets a "title" field for display.
+# Example: get_reviews_by_title("idiots") -> reviews of "3 Idiots"
+def get_reviews_by_title(title_keyword, hide_spoilers=False, limit=20, offset=0):
+    if not isinstance(title_keyword, str) or title_keyword.strip() == "":
+        raise ValueError("Title keyword cannot be empty.")
+    _validate_limit_offset(limit, offset)
+
+    connection = get_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT movie_id, title FROM movies WHERE title LIKE %s",
+                           ("%" + title_keyword.strip() + "%",))
+            rows = cursor.fetchall()
+    finally:
+        connection.close()
+
+    titles = {}
+    for row in rows:
+        titles[row["movie_id"]] = row["title"]
+    if len(titles) == 0:
+        return []
+
+    query = {"movie_id": {"$in": list(titles.keys())}}
+    if hide_spoilers:
+        query["spoiler"] = False
+
+    cursor = get_reviews_collection().find(query, {"_id": 0})
+    cursor = cursor.sort("created_at", DESCENDING).skip(offset).limit(limit)
+
+    result = []
+    for review in cursor:
+        review["title"] = titles[review["movie_id"]]
+        result.append(review)
+    return result
+
+
 # Counts the number of reviews for a specific movie.
 def get_review_count(movie_id):
     return get_reviews_collection().count_documents({"movie_id": movie_id})
 
 
-# Searches review text for a keyword using the text index. Best matches first.
-def search_reviews(keyword, limit=20):
-    if not isinstance(keyword, str) or keyword.strip() == "":
-        raise ValueError("Keyword cannot be empty.")
-    _validate_limit_offset(limit, 0)
-
-    cursor = get_reviews_collection().find(
-        {"$text": {"$search": keyword}},
-        {"_id": 0, "score": {"$meta": "textScore"}})
-    cursor = cursor.sort([("score", {"$meta": "textScore"})]).limit(limit)
-
-    result = []
-    for review in cursor:
-        result.append(review)
-    return result
-
-
 # ------------------------------------------------------------------------------------------------------
-# Advanced: aggregation pipelines
+# Advanced queries (aggregation pipelines)
 
 # Movies with the most reviews.
 # $lookup joins the "movies" collection (created by scripts/convert_movies_to_mongo.py)
@@ -329,33 +351,8 @@ def get_most_reviewed_movies(limit=10):
     return result
 
 
-# Number of reviews per genre.
-# $lookup brings in each movie's genres array, $unwind gives one row per genre.
-def get_reviews_per_genre(limit=10):
-    _validate_limit_offset(limit, 0)
-    pipeline = [
-        {"$lookup": {"from": "movies", "localField": "movie_id",
-                     "foreignField": "movie_id", "as": "movie"}},
-        {"$unwind": "$movie"},
-        {"$unwind": "$movie.genres"},
-        {"$group": {
-            "_id": "$movie.genres",
-            "review_count": {"$sum": 1},
-            "spoiler_count": {"$sum": {"$cond": ["$spoiler", 1, 0]}},
-        }},
-        {"$sort": {"review_count": -1, "_id": 1}},
-        {"$limit": limit},
-    ]
-
-    result = []
-    for row in get_reviews_collection().aggregate(pipeline):
-        result.append({"genre": row["_id"],
-                       "review_count": row["review_count"],
-                       "spoiler_count": row["spoiler_count"]})
-    return result
-
-
-# Most used review tags. $unwind splits each review's tags array.
+# Most used review tags across all reviews.
+# $unwind splits each review's tags array into one row per tag, then $group counts them.
 def get_popular_tags(limit=10):
     _validate_limit_offset(limit, 0)
     pipeline = [
@@ -368,20 +365,6 @@ def get_popular_tags(limit=10):
     result = []
     for row in get_reviews_collection().aggregate(pipeline):
         result.append({"tag": row["_id"], "count": row["count"]})
-    return result
-
-
-# Review activity per month, e.g. [{"month": "2026-03", "count": 120}, ...]
-def get_reviews_per_month():
-    pipeline = [
-        {"$group": {"_id": {"$dateToString": {"format": "%Y-%m", "date": "$created_at"}},
-                    "count": {"$sum": 1}}},
-        {"$sort": {"_id": 1}},
-    ]
-
-    result = []
-    for row in get_reviews_collection().aggregate(pipeline):
-        result.append({"month": row["_id"], "count": row["count"]})
     return result
 
 
