@@ -37,24 +37,36 @@ netflix-review-app/
 ├── data/                  # Original and cleaned datasets
 ├── db/
 │   ├── mariadb.py         # MariaDB connection, ratings and watchlist operations
-│   ├── mongodb.py         # MongoDB module
+│   ├── mongodb.py         # MongoDB reviews: CRUD, browsing, advanced queries
 │   └── catalogue.py       # Catalogue browsing and movie details
 ├── docs/
 │   ├── catalogue_api.md
+│   ├── reviews_api.md
+│   ├── mongodb_model.md
+│   ├── mongodb_handover.md
+│   ├── review_dataset_notes.md
+│   ├── advanced_query_results.md
+│   ├── mongodb_test_results.md
 │   ├── catalogue_test_results.md
 │   ├── ratings_watchlist_api.md
 │   ├── sql_test_results.md
 │   ├── er_diagram.png
 │   └── er_diagram.drawio
 ├── scripts/
-│   └── import_movies.py
+│   ├── import_movies.py
+│   ├── init_mongodb.py
+│   ├── convert_reviews_to_mongo.py
+│   ├── convert_movies_to_mongo.py
+│   ├── tag_reviews.py
+│   └── performance_mongodb.py
 ├── sql/
 │   ├── schema.sql
 │   ├── validate_catalogue.sql
 │   └── advanced_queries.sql
 ├── tests/
 │   ├── test_catalogue.py
-│   └── test_ratings_watchlist.py
+│   ├── test_ratings_watchlist.py
+│   └── test_reviews.py
 ├── .env                   # Local credentials (not committed)
 └── README.md
 ```
@@ -187,13 +199,13 @@ MariaDB contains eight tables:
 
 The schema is defined in `sql/schema.sql`, and the ER diagram is available in `docs/er_diagram.png`.
 
-MongoDB is used for review documents.
+MongoDB is used for review documents (`reviews` collection). The document model is described in `docs/mongodb_model.md`; setup, function contracts and sample calls are in `docs/mongodb_handover.md`.
 
 ## Development Status
 
 - **Catalogue foundation:** Implemented and tested.
 - **Ratings and watchlist:** Implemented and tested.
-- **MongoDB reviews:** Under development.
+- **MongoDB reviews:** Implemented and tested.
 - **Streamlit interface:** Under development.
 
 ## Team Integration
