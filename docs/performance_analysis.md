@@ -212,7 +212,8 @@ The script performs read-only operations and writes the measured outputs to `per
 
 The benchmark implementation is `scripts/benchmark_performance.py`.
 
-For the frontend evidence, retain the four Chrome Network screenshots and four Performance screenshots in a folder such as `docs/performance_evidence/`. Suggested filenames:
+# HAVENT ATTACHED 
+For the frontend evidence, retain the four Chrome Network screenshots and 4 Performance screenshots in a folder such as `docs/performance_evidence/`. Filenames:
 
 - `network_login_to_home.png`
 - `network_home_to_search.png`
