@@ -4,7 +4,7 @@ This checklist is for teammates to try the CineVault Streamlit application and r
 
 ## Before You Start
 
-1. Follow the setup instructions in the repository's `README.md`.
+1. Follow the setup instructions in the repository's [README.md](README.md).
 2. Start the application from the repository root:
 
    ```powershell
