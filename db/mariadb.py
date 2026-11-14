@@ -159,6 +159,34 @@ def get_rating_count(movie_id):
     finally:
         connection.close()
 
+
+# Retrieves the number of ratings for each star level.
+def get_rating_distribution(movie_id):
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            sql = """
+                SELECT stars, COUNT(*) AS rating_count
+                FROM ratings
+                WHERE movie_id = %s
+                GROUP BY stars
+                ORDER BY stars
+            """
+            cursor.execute(sql, (movie_id,))
+            rows = cursor.fetchall()
+
+        distribution = {stars: 0 for stars in range(1, 6)}
+
+        for row in rows:
+            distribution[row["stars"]] = row["rating_count"]
+
+        return distribution
+
+    finally:
+        connection.close()
+
+
 # Retrieves the highest rated movies based on average user ratings.
 # For testing purposes, the minimum is set to 2 ratings.
 # This threshold can be increased depending on the number of ratings
@@ -280,8 +308,279 @@ def remove_from_watchlist(user_id, movie_id):
     finally:
         connection.close()
 
+# Watched Movies CRUD operations
+
+# Marks a movie as watched by a user.
+def mark_as_watched(user_id, movie_id):
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            sql = """
+                INSERT INTO watched_movies (user_id, movie_id)
+                VALUES (%s, %s)
+            """
+            cursor.execute(sql, (user_id, movie_id))
+
+        connection.commit()
+        return True
+
+    except pymysql.err.IntegrityError as error:
+        connection.rollback()
+
+        if error.args[0] == 1062:
+            return False
+        elif error.args[0] == 1452:
+            raise ValueError("Invalid user ID or movie ID.") from error
+
+        raise
+
+    finally:
+        connection.close()
+
+
+# Retrieves all movies marked as watched by a user.
+def get_watched_movies(user_id):
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            sql = """
+                SELECT
+                    m.movie_id,
+                    m.title,
+                    w.watched_at
+                FROM watched_movies AS w
+                JOIN movies AS m
+                    ON w.movie_id = m.movie_id
+                WHERE w.user_id = %s
+                ORDER BY w.watched_at DESC
+            """
+            cursor.execute(sql, (user_id,))
+            result = list(cursor.fetchall())
+
+        return result
+
+    finally:
+        connection.close()
+
+
+# Removes a movie's watched status for a user.
+def remove_watched_status(user_id, movie_id):
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            sql = """
+                DELETE FROM watched_movies
+                WHERE user_id = %s AND movie_id = %s
+            """
+            cursor.execute(sql, (user_id, movie_id))
+
+        connection.commit()
+        return cursor.rowcount > 0
+
+    finally:
+        connection.close()
+
+# Retrieves all ratings submitted by a specific user.
+def get_user_ratings(user_id):
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT
+                    r.movie_id,
+                    m.title,
+                    r.stars,
+                    r.updated_at
+                FROM ratings r
+                JOIN movies m ON r.movie_id = m.movie_id
+                WHERE r.user_id = %s
+                ORDER BY r.updated_at DESC
+                """,
+                (user_id,)
+            )
+
+            return list(cursor.fetchall())
+
+    finally:
+        connection.close()
+
+
+# Retrieves average ratings and rating counts for multiple movies in batches.
+# Movies without ratings are included with average_rating=None and rating_count=0.
+def get_movie_rating_summaries(movie_ids):
+    if not isinstance(movie_ids, (list, tuple)):
+        raise ValueError("Movie IDs must be a list or tuple.")
+
+    if any(
+        not isinstance(movie_id, str) or not movie_id.strip()
+        for movie_id in movie_ids
+    ):
+        raise ValueError("Movie IDs must be non-empty strings.")
+
+    movie_ids = list(dict.fromkeys(movie_ids))
+
+    if not movie_ids:
+        return {}
+
+    summaries = {
+        movie_id: {
+            "average_rating": None,
+            "rating_count": 0
+        }
+        for movie_id in movie_ids
+    }
+
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            batch_size = 500
+
+            for start in range(0, len(movie_ids), batch_size):
+                batch = movie_ids[start:start + batch_size]
+                placeholders = ", ".join(["%s"] * len(batch))
+
+                sql = f"""
+                    SELECT
+                        movie_id,
+                        AVG(stars) AS average_rating,
+                        COUNT(*) AS rating_count
+                    FROM ratings
+                    WHERE movie_id IN ({placeholders})
+                    GROUP BY movie_id
+                """
+
+                cursor.execute(sql, batch)
+
+                for row in cursor.fetchall():
+                    summaries[row["movie_id"]] = {
+                        "average_rating": row["average_rating"],
+                        "rating_count": row["rating_count"]
+                    }
+
+        return summaries
+
+    finally:
+        connection.close()
+
+
+# Retrieves star ratings for multiple users for one movie in a single query.
+# The returned dictionary is keyed by user_id. Users without a rating are omitted.
+def get_movie_user_ratings(movie_id, user_ids):
+    if not isinstance(movie_id, str) or not movie_id.strip():
+        raise ValueError("Movie ID must be a non-empty string.")
+
+    if not isinstance(user_ids, (list, tuple)):
+        raise ValueError("User IDs must be a list or tuple.")
+
+    if any(type(user_id) is not int or user_id < 1 for user_id in user_ids):
+        raise ValueError("User IDs must be positive integers.")
+
+    user_ids = list(dict.fromkeys(user_ids))
+
+    if not user_ids:
+        return {}
+
+    ratings = {}
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            batch_size = 500
+
+            for start in range(0, len(user_ids), batch_size):
+                batch = user_ids[start:start + batch_size]
+                placeholders = ", ".join(["%s"] * len(batch))
+
+                sql = f"""
+                    SELECT user_id, stars
+                    FROM ratings
+                    WHERE movie_id = %s
+                    AND user_id IN ({placeholders})
+                """
+
+                cursor.execute(sql, [movie_id] + batch)
+
+                for row in cursor.fetchall():
+                    ratings[row["user_id"]] = row["stars"]
+
+        return ratings
+
+    finally:
+        connection.close()
+
+
+# Ranks an already-filtered set of movie IDs using MariaDB rating data.
+# Rated movies come first, ordered by average rating, rating count, title and ID.
+def get_movies_sorted_by_rating(movie_ids):
+    if not isinstance(movie_ids, (list, tuple)):
+        raise ValueError("Movie IDs must be a list or tuple.")
+
+    if any(
+        not isinstance(movie_id, str) or not movie_id.strip()
+        for movie_id in movie_ids
+    ):
+        raise ValueError("Movie IDs must be non-empty strings.")
+
+    movie_ids = list(dict.fromkeys(movie_ids))
+
+    if not movie_ids:
+        return []
+
+    results = []
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            batch_size = 500
+
+            for start in range(0, len(movie_ids), batch_size):
+                batch = movie_ids[start:start + batch_size]
+                placeholders = ", ".join(["%s"] * len(batch))
+
+                sql = f"""
+                    SELECT
+                        m.movie_id,
+                        m.title,
+                        AVG(r.stars) AS average_rating,
+                        COUNT(r.user_id) AS rating_count
+                    FROM movies AS m
+                    LEFT JOIN ratings AS r
+                        ON m.movie_id = r.movie_id
+                    WHERE m.movie_id IN ({placeholders})
+                    GROUP BY m.movie_id, m.title
+                """
+
+                cursor.execute(sql, batch)
+                results.extend(cursor.fetchall())
+
+        results.sort(
+            key=lambda movie: (
+                movie["average_rating"] is None,
+                -(
+                    float(movie["average_rating"])
+                    if movie["average_rating"] is not None
+                    else 0
+                ),
+                -movie["rating_count"],
+                movie["title"].casefold(),
+                movie["movie_id"]
+            )
+        )
+
+        return results
+
+    finally:
+        connection.close()
+
 if __name__ == "__main__":
     connection = get_connection()
     print("MariaDB connection successful!")
     connection.close()
+
 

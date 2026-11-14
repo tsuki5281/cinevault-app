@@ -292,5 +292,71 @@ All completed catalogue tests passed.
 - Only columns retained during dataset cleaning are available.
 - Sorting currently supports title A–Z and Z–A only.
 - Pagination returns a maximum of 100 results per request.
-- The module currently has no rating-based sorting.
+- Community rating-based sorting is handled by the MariaDB ratings module rather than the catalogue module.
 - Catalogue functions require an accessible MariaDB connection.
+
+## 11. Streamlit Integration Updates
+
+The catalogue module was extended to support the Streamlit Search interface. These additions allow the application to retrieve movie, actor and genre information dynamically from the existing MariaDB catalogue.
+
+### Additional Functions
+
+#### `get_search_suggestions(keyword, limit=5)`
+
+Retrieves matching suggestions from three categories:
+- Movies
+- Actors
+- Genres
+
+Suggestions beginning with the entered keyword are prioritised before partial matches.
+
+Returns a dictionary containing three lists: `movies`, `actors` and `genres`.
+
+An empty keyword or an invalid limit raises `ValueError`. The limit must be between 1 and 20.
+
+#### `get_recommended_actors(limit=12)`
+
+Retrieves actor recommendations based on the curated collection of six demo movies.
+
+The results include:
+- `actor_id`
+- `actor_name`
+- `movie_count`
+- `movie_id`
+- `title`
+
+Actors are ranked by their number of movie appearances across the catalogue, with alphabetical ordering used to break ties.
+
+The function accepts a limit between 1 and 24.
+
+#### `get_all_genres()`
+
+Retrieves all available genre IDs and names from the `genres` table, ordered alphabetically.
+
+This allows the Streamlit interface to populate genre selection controls dynamically instead of maintaining a hardcoded genre list.
+
+#### `get_movie_card_details(movie_ids)`
+
+Retrieves movie information required by the Search result cards in a single database query.
+
+**Parameters**
+- `movie_ids`: A list or tuple of movie IDs, with a maximum of 100 IDs.
+
+**Returns**
+
+A dictionary keyed by `movie_id`, containing:
+- `movie_id`
+- `title`
+- `genres`
+
+Duplicate movie IDs are removed. An empty input returns an empty dictionary `{}`. Invalid inputs raise `ValueError`.
+
+Average ratings and rating counts are retrieved separately through the MariaDB ratings module.
+
+### Updates to `browse_movies()`
+
+The function now accepts `limit=None` to retrieve all matching movie IDs without applying SQL pagination. When `limit=None`, `offset` must be zero.
+
+This supports the Streamlit application's Highest Rated sorting workflow. The catalogue first retrieves all movies matching the selected title, actor and genre filters. Their rating-based ranking is subsequently handled by `db.mariadb.get_movies_sorted_by_rating()`.
+
+The existing title sorting, actor and genre filtering, Any/All matching and normal pagination behaviour are retained.

@@ -256,3 +256,112 @@ python -m scripts.performance_mongodb
 - Each user can only have one review per movie.
 - The `movies` collection is a copy of the MariaDB catalogue; rerun the conversion script after the catalogue changes.
 - The sample reviews cover the first 100 movies only and were made for this project, because real Netflix user reviews are not publicly available (see `docs/review_dataset_notes.md`).
+
+## 12. Streamlit Integration Updates
+
+The MongoDB review module was integrated with the Streamlit Movie Details interface.
+
+The original review CRUD operations, spoiler filtering, tag filtering, date sorting, pagination and aggregation functions remain available.
+
+### 12.1 Review Retrieval Responsibility
+
+The `get_movie_reviews()` function is responsible for retrieving review documents from MongoDB.
+
+**Function signature**
+
+    get_movie_reviews(
+        movie_id,
+        sort_by="newest",
+        hide_spoilers=False,
+        tag=None,
+        limit=20,
+        offset=0
+    )
+
+The supported sorting options are:
+- `newest`: Newest reviews first.
+- `oldest`: Oldest reviews first.
+
+Other existing functionality remains unchanged:
+- Spoiler filtering.
+- Tag filtering.
+- Pagination using `limit` and `offset`.
+
+Rating retrieval and Highest Rated sorting are handled separately by the Streamlit integration because star ratings are stored in MariaDB.
+
+### 12.2 Application-Level Review and Rating Integration
+
+The Streamlit Movie Details screen uses the following helper:
+
+`get_community_reviews_with_ratings(movie_id, hide_spoilers=True, sort_by="newest", limit=50, offset=0)`
+
+**Location:** `screens/movie_details.py`
+
+This helper combines review documents retrieved from MongoDB with the corresponding users' star ratings retrieved through:
+
+`db.mariadb.get_movie_user_ratings(movie_id, user_ids)`
+
+The combined review dictionaries retain the original MongoDB review fields and include an additional field:
+
+- `rating_stars`: The user's star rating from 1 to 5, or `None` if the user has not rated the movie.
+
+The original MongoDB review documents are not modified when this additional field is added.
+
+### 12.3 Supported Review Sorting
+
+The Streamlit interface provides three sorting options:
+
+| Sorting option | Implementation |
+|---|---|
+| Newest first | MongoDB sorts by `created_at` descending. |
+| Oldest first | MongoDB sorts by `created_at` ascending. |
+| Highest rated | Streamlit combines MongoDB reviews with MariaDB ratings and sorts the results. |
+
+For Highest Rated sorting, the application follows these steps:
+
+1. All matching reviews are retrieved from MongoDB in batches of 100.
+2. The user IDs associated with the retrieved reviews are collected.
+3. MariaDB retrieves their corresponding star ratings using `get_movie_user_ratings()`.
+4. Each review is enriched with its `rating_stars` value.
+5. Reviews with ratings are displayed before reviews without ratings.
+6. Higher star ratings appear first.
+7. Newer reviews appear first when ratings are equal.
+8. Pagination is applied after the complete matching review set has been ranked.
+
+This ensures that Highest Rated sorting is applied across all matching reviews rather than only the first retrieved page.
+
+For Newest and Oldest sorting, MongoDB continues to handle database-level sorting and pagination directly.
+
+### 12.4 Separation of Database Responsibilities
+
+The revised integration separates numerical ratings from written reviews.
+
+| Database / Module | Responsibility |
+|---|---|
+| MongoDB (`db/mongodb.py`) | Review documents, review CRUD, spoilers, tags, date sorting and pagination. |
+| MariaDB (`db/mariadb.py`) | Numerical star ratings and retrieval of multiple users' ratings. |
+| Streamlit (`screens/movie_details.py`) | Combines review documents with their corresponding ratings and handles Highest Rated sorting. |
+
+This removes the direct MariaDB rating lookup from the MongoDB review retrieval function.
+
+However, existing cross-database functionality is preserved where required:
+
+- `_user_and_movie_exist()` continues checking user and movie existence in MariaDB before a review is inserted.
+- `get_reviews_by_title()` continues retrieving matching movie IDs and titles from the MariaDB catalogue before retrieving their reviews from MongoDB.
+
+These existing checks are retained because MongoDB cannot enforce foreign keys to the MariaDB database.
+
+### 12.5 Impact on Existing Review Functionality
+
+The following existing functionality remains unchanged:
+
+- Adding, retrieving, updating and deleting reviews.
+- One review per user per movie.
+- Review text validation and the 2,000-character limit.
+- Spoiler identification and filtering.
+- Review tags and tag filtering.
+- Newest and oldest review sorting.
+- Review pagination.
+- Most-reviewed movie and popular-tag aggregation queries.
+
+No changes were made to the MongoDB review document structure, collection schema validator or existing indexes as part of this integration cleanup.

@@ -461,3 +461,215 @@ The detailed SQL query testing results are recorded separately in `docs/sql_test
 - The highest-rated movies function uses a default minimum of two ratings and returns up to ten movies.
 - The functions require an active connection to the local MariaDB database.
 - The ratings and watchlist records are managed separately from the MongoDB movie reviews.
+
+## 11. Streamlit Integration Updates
+
+The MariaDB module was extended to support additional user activity and rating information required by the Streamlit application.
+
+The original rating CRUD, watchlist management, average-rating calculation, rating count and highest-rated movie retrieval functions remain available.
+
+### 11.1 Additional Rating Functions
+
+#### `get_rating_distribution(movie_id)`
+
+Retrieves the number of ratings received at each star level for a specific movie.
+
+**Parameters**
+- `movie_id`: String representing the movie ID.
+
+**Returns**
+
+A dictionary containing all five rating levels (1 to 5), including levels with zero ratings.
+
+Example:
+
+    {
+        1: 0,
+        2: 1,
+        3: 2,
+        4: 3,
+        5: 1
+    }
+
+This function supports displaying the distribution of community ratings.
+
+#### `get_user_ratings(user_id)`
+
+Retrieves all movie ratings submitted by a specific user.
+
+**Parameters**
+- `user_id`: Integer representing the user's ID.
+
+**Returns**
+
+A list of dictionaries containing:
+- `movie_id`
+- `title`
+- `stars`
+- `updated_at`
+
+Results are ordered by the most recently updated rating.
+
+This function supports the My Activity page, allowing users to view their personal rating history.
+
+### 11.2 Watched History Management
+
+Watched history was introduced as an additional user activity feature using a separate MariaDB table named `watched_movies`.
+
+#### `mark_as_watched(user_id, movie_id)`
+
+Records that a user has watched a particular movie.
+
+**Returns**
+- `True` if the record is added successfully.
+- `False` if the user has already marked the movie as watched.
+- Raises `ValueError` if the user ID or movie ID does not exist.
+
+#### `get_watched_movies(user_id)`
+
+Retrieves all movies marked as watched by a specific user.
+
+**Returns**
+
+A list of dictionaries containing:
+- `movie_id`
+- `title`
+- `watched_at`
+
+Results are ordered by the most recently watched movie.
+
+#### `remove_watched_status(user_id, movie_id)`
+
+Removes a movie from a user's watched history.
+
+**Returns**
+- `True` if a record is deleted successfully.
+- `False` if the record does not exist.
+
+Removing a watched record does not delete the user's rating or review.
+
+### 11.3 Batch Rating Retrieval Functions
+
+The following functions were introduced to support efficient integration between the catalogue, ratings and review modules.
+
+#### `get_movie_rating_summaries(movie_ids)`
+
+Retrieves average ratings and rating counts for multiple movies in batches.
+
+**Parameters**
+- `movie_ids`: A list or tuple of movie IDs.
+
+**Returns**
+
+A dictionary keyed by `movie_id`, containing:
+- `average_rating`
+- `rating_count`
+
+Example:
+
+    {
+        "s10": {
+            "average_rating": 4.5,
+            "rating_count": 4
+        },
+        "s101": {
+            "average_rating": None,
+            "rating_count": 0
+        }
+    }
+
+Movies without ratings are included with `average_rating=None` and `rating_count=0`.
+
+Duplicate movie IDs are removed. An empty input returns an empty dictionary `{}`. Invalid inputs raise `ValueError`.
+
+The function processes movie IDs in batches of up to 500 per database query.
+
+This function is used by the Streamlit Search interface to display community ratings on movie cards without performing a separate rating query for every movie.
+
+#### `get_movie_user_ratings(movie_id, user_ids)`
+
+Retrieves star ratings given by multiple users for a specific movie in a single database operation.
+
+**Parameters**
+- `movie_id`: String representing the movie ID.
+- `user_ids`: A list or tuple of positive integer user IDs.
+
+**Returns**
+
+A dictionary keyed by `user_id`, with the corresponding star rating as the value.
+
+Example:
+
+    {
+        40: 5,
+        36: 4,
+        38: 3
+    }
+
+Users who have not rated the movie are omitted from the result.
+
+Duplicate user IDs are removed. An empty user ID list returns an empty dictionary `{}`. Invalid inputs raise `ValueError`.
+
+The function processes user IDs in batches of up to 500 per database query.
+
+This function supports the retrieval of reviewer ratings for community review cards without requiring an individual database query for every review.
+
+#### `get_movies_sorted_by_rating(movie_ids)`
+
+Ranks an existing list of filtered movie IDs according to their community ratings.
+
+**Parameters**
+- `movie_ids`: A list or tuple of movie IDs.
+
+**Returns**
+
+A list of dictionaries containing:
+- `movie_id`
+- `title`
+- `average_rating`
+- `rating_count`
+
+The ranking order is:
+1. Movies with ratings appear before unrated movies.
+2. Higher average ratings appear first.
+3. Higher rating counts are used to break equal-average ties.
+4. Movie titles are used as the next tie-breaker.
+5. Movie IDs provide the final deterministic ordering.
+
+The function removes duplicate movie IDs and processes them in batches of up to 500. An empty input returns an empty list `[]`.
+
+The Streamlit Search interface uses this function after catalogue filtering to ensure that Highest Rated sorting is applied across all matching movies before displaying paginated results.
+
+### 11.4 Watched History Database Setup
+
+Watched history uses a separate MariaDB table named `watched_movies`.
+
+The table creation script is located at:
+
+`sql/watched_movies.sql`
+
+Run this script after creating the original database schema to enable the watched-history functions.
+
+The table includes:
+- `user_id`
+- `movie_id`
+- `watched_at`
+
+A composite primary key (`user_id`, `movie_id`) prevents duplicate watched records. Foreign keys maintain references to existing users and movies.
+
+The watched-history implementation is an additional SQL script and does not require rewriting the original `sql/schema.sql`.
+
+### 11.5 Integration with the Streamlit Application
+
+The MariaDB module supplies numerical rating information and user movie activity to the Streamlit interface.
+
+The integration supports:
+
+- Displaying average community ratings and rating counts on Search movie cards.
+- Sorting filtered movie results by community rating.
+- Displaying individual users' ratings alongside their written reviews.
+- Showing personal ratings in My Activity.
+- Managing watched history independently from ratings and reviews.
+- Maintaining user-specific watchlists and activity records.
+
+The Streamlit layer combines catalogue, rating and review information for display while keeping the corresponding database operations within their respective modules.
