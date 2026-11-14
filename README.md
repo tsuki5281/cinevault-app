@@ -244,6 +244,10 @@ An official account can also be created from the terminal using the optional hel
 python -m scripts.create_official_account
 ```
 
+# Application Testing (VERY IMPORTANT!!!)
+– Step-by-step guide for manually testing CineVault's features and recording feedback.
+- [Application Testing Checklist](application_test_checklist.md) 
+
 ## Testing
 
 Automated tests are located in `tests/`. The selected Streamlit-related test coverage includes authentication, homepage data, genres, actor recommendations, search suggestions, movie-card details, rating distribution and sorting, watched history, user activity and review sorting.
