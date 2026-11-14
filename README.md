@@ -246,7 +246,7 @@ python -m scripts.create_official_account
 
 ### Application Testing (Very Important!!!)
 – Step-by-step guide for manually testing CineVault's features and recording feedback.
-- [Application Testing Checklist](docs/application_test_checklist.md) 
+- [Application Testing Checklist](application_test_checklist.md) 
 
 ## Testing
 
