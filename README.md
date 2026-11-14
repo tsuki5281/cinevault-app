@@ -244,7 +244,7 @@ An official account can also be created from the terminal using the optional hel
 python -m scripts.create_official_account
 ```
 
-### Application Testing (Very Important!!!)
+# Application Testing (VERY IMPORTANT!!!)
 – Step-by-step guide for manually testing CineVault's features and recording feedback.
 - [Application Testing Checklist](application_test_checklist.md) 
 
