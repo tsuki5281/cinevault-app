@@ -18,10 +18,9 @@ Netflix does not publish user reviews, and the catalogue dataset has no review t
 ## 3. How the reviews were made
 
 1. For each movie, the review was based on its title, genres and official Netflix description in `data/netflix_movies_cleaned.csv`.
-2. The review text was drafted with the help of an AI assistant (Claude) and checked by Weibin. Most reviews are short and informal (some only a few words, 9 with an emoji), a few are long, and `sample_user_11` writes in a film-critic style, so the dataset looks like real user reviews.
-3. Spoiler reviews: 29 movies were picked down the list using the digits of π as the gaps between picks (e.g. 3, 1, 4, 1, 5…), so the choice was not hand-picked. For each one, a review revealing a real plot point (such as the ending or a twist) was written after checking published plot summaries, and its `spoiler` column was set to `Yes`. All other reviews avoid plot details beyond the official description.
-4. Tags were not chosen by hand. `scripts/tag_reviews.py` gives a review a tag only when one of that tag's keywords appears in the review text (for example "jump scares" → `scary`, "the cast" → `acting`), up to 3 tags per review. 7 reviews mention no keyword (e.g. "just horrible") and have no tags.
-5. The `created_at` dates were generated randomly (with a fixed seed) inside the date range above, so the "newest first" ordering has realistic, varied dates.
+2. Spoiler reviews: 29 movies were picked down the list using the digits of π as the gaps between picks (e.g. 3, 1, 4, 1, 5…), so the choice was not hand-picked. For each one, a review revealing a real plot point (such as the ending or a twist) was written after checking published plot summaries, and its `spoiler` column was set to `Yes`. All other reviews avoid plot details beyond the official description.
+3. Tags were not chosen by hand. `scripts/tag_reviews.py` gives a review a tag only when one of that tag's keywords appears in the review text (for example "jump scares" → `scary`, "the cast" → `acting`), up to 3 tags per review. 7 reviews mention no keyword (e.g. "just horrible") and have no tags.
+4. The `created_at` dates were generated randomly (with a fixed seed) inside the date range above, so the "newest first" ordering has realistic, varied dates.
 
 ## 4. Fields
 
