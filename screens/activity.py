@@ -75,9 +75,17 @@ def save_activity_rating(user_id, movie_id, stars):
     }
 
     if movie_id in ratings:
-        return update_rating(user_id, movie_id, stars)
+        saved = update_rating(user_id, movie_id, stars)
+    else:
+        saved = add_rating(user_id, movie_id, stars)
 
-    return add_rating(user_id, movie_id, stars)
+    # Keep rating actions consistent with Movie Details.
+    try:
+        mark_as_watched(user_id, movie_id)
+    except Exception:
+        pass
+
+    return saved
 
 
 def save_activity_review(
@@ -250,13 +258,13 @@ def display_watched_history(watched_movies):
     st.subheader("Watched History")
 
     st.caption(
-        "Movies you've marked as watched by submitting a review."
+        "Movies you've rated or reviewed are automatically added to your watched history."
     )
 
     if not watched_movies:
         st.info(
             "Your watched history is empty. "
-            "Submit a movie review to add it here."
+            "Rate or review a movie to add it here."
         )
         return
 

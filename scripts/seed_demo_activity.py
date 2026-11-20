@@ -1,49 +1,96 @@
+"""
+Seed different watched-history and watchlist entries
+for CineVault's three featured demo profiles.
+
+Safe to run repeatedly:
+- Existing watched-history entries are preserved.
+- Existing watchlist entries are preserved.
+- Duplicate entries are skipped.
+"""
 
 from db.authentication import get_demo_users
 from db.mariadb import add_to_watchlist, mark_as_watched
 
 
-PROFILE_USERNAME = "sample_user_07"
+# Different activity for each featured demo profile.
+DEMO_ACTIVITY = {
+    "sample_user_06": {
+        # Movies this profile has already reviewed.
+        "watched": ["s101", "s28", "s107", "s122"],
 
-WATCHED_MOVIES = [
-    "s101",  # 3 Idiots
-    "s28",   # #Alive
-    "s107"   # 365 Days
-]
+        # Movies saved for later.
+        "watchlist": ["s128", "s10"]
+    },
 
-WATCHLIST_MOVIES = [
-    "s122",  # 50 First Dates
-    "s128",  # 6 Underground
-    "s10"    # 1920
-]
+    "sample_user_07": {
+        "watched": ["s4", "s23", "s32"],
+        "watchlist": ["s122", "s128", "s10"]
+    },
+
+    "sample_user_11": {
+        "watched": ["s4", "s28", "s101"],
+        "watchlist": ["s107", "s122", "s128", "s10"]
+    }
+}
 
 
 def main():
+
+    # Retrieve available demo accounts.
     demo_users = {
         user["username"]: user
         for user in get_demo_users()
     }
 
-    if PROFILE_USERNAME not in demo_users:
+    # Check that all three featured profiles exist.
+    missing_users = set(DEMO_ACTIVITY) - set(demo_users)
+
+    if missing_users:
         raise ValueError(
-            f"Demo account {PROFILE_USERNAME} was not found."
+            f"Missing demo accounts: {sorted(missing_users)}. "
+            "Run the review import script first."
         )
 
-    user_id = demo_users[PROFILE_USERNAME]["user_id"]
+    total_watched = 0
+    total_watchlist = 0
 
-    print(f"Seeding activity for {PROFILE_USERNAME}...")
+    # Seed activity for each featured profile.
+    for username, activity in DEMO_ACTIVITY.items():
 
-    for movie_id in WATCHED_MOVIES:
-        added = mark_as_watched(user_id, movie_id)
-        status = "Added" if added else "Already exists"
-        print(f"Watched {movie_id}: {status}")
+        user_id = demo_users[username]["user_id"]
 
-    for movie_id in WATCHLIST_MOVIES:
-        added = add_to_watchlist(user_id, movie_id)
-        status = "Added" if added else "Already exists"
-        print(f"Watchlist {movie_id}: {status}")
+        print(f"\nSeeding activity for {username}...")
 
-    print("Demo activity setup complete.")
+        # Watched history
+        for movie_id in activity["watched"]:
+
+            added = mark_as_watched(user_id, movie_id)
+
+            status = "Added" if added else "Already exists"
+
+            print(f"  Watched {movie_id}: {status}")
+
+            if added:
+                total_watched += 1
+
+        # Watchlist
+        for movie_id in activity["watchlist"]:
+
+            added = add_to_watchlist(user_id, movie_id)
+
+            status = "Added" if added else "Already exists"
+
+            print(f"  Watchlist {movie_id}: {status}")
+
+            if added:
+                total_watchlist += 1
+
+    print("\n================================")
+    print("Demo activity setup completed!")
+    print("================================")
+    print(f"New watched entries: {total_watched}")
+    print(f"New watchlist entries: {total_watchlist}")
+    print(f"Featured profiles updated: {len(DEMO_ACTIVITY)}")
 
 
 if __name__ == "__main__":

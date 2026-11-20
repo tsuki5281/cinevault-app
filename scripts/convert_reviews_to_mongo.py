@@ -7,6 +7,9 @@
 #   created_at "2026-03-01 14:05" (Singapore time) -> datetime (BSON date, stored in UTC)
 # Invalid rows are skipped and reported with their CSV line number.
 #
+# Sample reviews imported here are also added to MariaDB's watched_movies table.
+# This keeps imported demo reviews consistent with reviews submitted in the app.
+#
 # Run from the repository root (after scripts.import_movies and scripts.init_mongodb):
 #   python -m scripts.convert_reviews_to_mongo
 
@@ -106,8 +109,44 @@ def get_all_sample_user_ids():
     return user_ids
 
 
+# Adds each imported sample review's movie to the user's watched history.
+# INSERT IGNORE makes this safe to run repeatedly and preserves existing timestamps.
+def sync_sample_reviews_to_watched_history(documents):
+    if not documents:
+        return 0
+
+    watched_pairs = list(dict.fromkeys(
+        (document["user_id"], document["movie_id"])
+        for document in documents
+    ))
+
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.executemany(
+                """
+                INSERT IGNORE INTO watched_movies (user_id, movie_id)
+                VALUES (%s, %s)
+                """,
+                watched_pairs
+            )
+            inserted = cursor.rowcount
+
+        connection.commit()
+        return inserted
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
+
+
 # Deletes sample users from older dataset versions (e.g. sample_user_12 to sample_user_200).
-# A user is only deleted if they are not in the current dataset and have no ratings or watchlist rows.
+# A user is only deleted if they are not in the current dataset and have no ratings,
+# watchlist rows or watched-history rows.
 def remove_unused_sample_users(current_usernames):
     connection = get_connection()
 
@@ -124,8 +163,9 @@ def remove_unused_sample_users(current_usernames):
                 cursor.execute(
                     "DELETE FROM users WHERE user_id = %s "
                     "AND NOT EXISTS (SELECT 1 FROM ratings WHERE ratings.user_id = %s) "
-                    "AND NOT EXISTS (SELECT 1 FROM watchlist WHERE watchlist.user_id = %s)",
-                    (row["user_id"], row["user_id"], row["user_id"]))
+                    "AND NOT EXISTS (SELECT 1 FROM watchlist WHERE watchlist.user_id = %s) "
+                    "AND NOT EXISTS (SELECT 1 FROM watched_movies WHERE watched_movies.user_id = %s)",
+                    (row["user_id"], row["user_id"], row["user_id"], row["user_id"]))
                 removed = removed + cursor.rowcount
 
         connection.commit()
@@ -246,10 +286,13 @@ def main():
     if len(documents) > 0:
         collection.insert_many(documents, ordered=False)
 
+    watched_added = sync_sample_reviews_to_watched_history(documents)
+
     removed_users = remove_unused_sample_users(usernames)
 
     print(f"Removed {removed} old sample reviews")
     print(f"Removed {removed_users} unused sample users from older dataset versions")
+    print(f"Added {watched_added} imported reviews to watched history")
     print(f"Users in dataset: {len(user_ids)} (created in MariaDB if missing)")
     print(f"Converted and inserted: {len(documents)} reviews | Skipped: {len(rows) - len(valid_rows)}")
     if len(documents) > 0:

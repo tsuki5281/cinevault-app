@@ -157,9 +157,18 @@ def save_movie_rating(user_id, movie_id, stars):
     existing_rating = get_rating(user_id, movie_id)
 
     if existing_rating:
-        return update_rating(user_id, movie_id, stars)
+        saved = update_rating(user_id, movie_id, stars)
+    else:
+        saved = add_rating(user_id, movie_id, stars)
 
-    return add_rating(user_id, movie_id, stars)
+    # A successful rating action means the member has watched the movie.
+    # Keep the rating even if the separate watched-history write fails.
+    try:
+        mark_as_watched(user_id, movie_id)
+    except Exception:
+        pass
+
+    return saved
 
 
 def save_movie_review(
