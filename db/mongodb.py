@@ -228,33 +228,32 @@ def delete_review(user_id, movie_id):
 # ------------------------------------------------------------------------------------------------------
 # Browsing reviews
 
-# Retrieves the reviews for a movie.
-# sort_by: "newest" or "oldest". hide_spoilers=True leaves out spoiler reviews.
-# tag: only reviews with this tag. Supports pagination with limit and offset.
+# Retrieves review documents for a movie, with optional spoiler/tag filtering
+# and database-level date sorting and pagination.
+# Rating lookup and highest-rated sorting are handled by the application layer.
 def get_movie_reviews(movie_id, sort_by="newest", hide_spoilers=False, tag=None, limit=20, offset=0):
     if not isinstance(movie_id, str) or movie_id.strip() == "":
         raise ValueError("Movie ID must be a non-empty string.")
+
     if sort_by not in ("newest", "oldest"):
         raise ValueError("sort_by must be 'newest' or 'oldest'")
+
     _validate_limit_offset(limit, offset)
 
     query = {"movie_id": movie_id}
+
     if hide_spoilers:
         query["spoiler"] = False
+
     if tag:
         query["tags"] = tag.strip().lower()
 
-    direction = DESCENDING
-    if sort_by == "oldest":
-        direction = ASCENDING
-
+    direction = DESCENDING if sort_by == "newest" else ASCENDING
     cursor = get_reviews_collection().find(query, {"_id": 0})
     cursor = cursor.sort("created_at", direction).skip(offset).limit(limit)
 
-    result = []
-    for review in cursor:
-        result.append(review)
-    return result
+    return list(cursor)
+
 
 
 # Retrieves all reviews written by one user, newest first.

@@ -1,0 +1,9 @@
+﻿test,operation,requests,successes,failures,workers,total_elapsed_seconds,throughput_ops_per_sec,average_ms,median_ms,p95_ms,min_ms,max_ms,error_examples
+sequential,movie_title_search,30,30,0,1,0.851667,35.225,28.387,27.282,38.604,26.092,43.622,
+sequential,actor_genre_filter,30,30,0,1,0.980458,30.598,32.68,28.577,49.474,26.491,51.818,
+sequential,movie_details,30,30,0,1,0.892132,33.627,29.736,26.885,49.911,25.979,51.5,
+sequential,search_suggestions,30,30,0,1,1.05283,28.495,35.092,32.606,46.974,32.015,55.819,
+sequential,highest_rated_movies,30,30,0,1,0.840313,35.701,28.009,25.807,44.574,24.428,47.409,
+sequential,most_reviewed_movies,30,30,0,1,0.044249,677.986,1.474,1.436,1.756,1.3,1.777,
+sequential,community_reviews,30,30,0,1,0.885477,33.88,29.514,26.566,48.98,25.764,51.662,
+sequential,popular_review_tags,30,30,0,1,0.021732,1380.472,0.724,0.695,0.908,0.618,0.908,

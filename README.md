@@ -1,95 +1,79 @@
-# netflix-review-app
+# CineVault
 
 **INF2003 Database Systems Group Project**
 
-A Netflix-inspired movie catalogue application integrating MariaDB and MongoDB.
+CineVault is a Netflix-inspired movie discovery and community-review application built with **Streamlit, MariaDB and MongoDB**. Members can explore movies, browse community ratings and reviews, rate and review titles, manage a watchlist, and view their watched history.
 
-## Project Overview
+## Important: use Dark Mode
 
-The application allows users to browse and search movies, filter by genres and actors, view movie details, manage ratings and watchlists, and submit reviews.
+> **CineVault is designed for DARK MODE ONLY.** The colours, text, cards and page styling were designed for a dark interface. Light Mode and Automatic Mode are not supported and may cause parts of the interface to look incorrect or become difficult to read.
+>
+> When the app opens, select **⋮ (top-right menu) → Settings → Theme → Dark**. Keep the app in Dark Mode while using and testing CineVault.
 
-### Main Features
+## What you need
 
-- **Movie Catalogue:** Search movies by title and filter by multiple genres and actors using AND/OR matching.
-- **Sorting and Pagination:** Sort movies alphabetically and navigate through results.
-- **Movie Details:** View directors, cast, country, descriptions and genres.
-- **Ratings:** Rate movies on a 1–5 star scale.
-- **Watchlist:** Save and manage movies in a personal watchlist.
-- **Reviews:** Store and retrieve movie reviews using MongoDB.
+Install these before starting:
 
-*Note: Some features are still under development.*
+- Git
+- Python 3.13
+- MariaDB Server
+- MongoDB Community Server
+- Visual Studio Code
+- HeidiSQL or another MariaDB client
 
-## Technologies
+Keep the MariaDB and MongoDB services running while using the application.
 
-- Python
-- MariaDB
-- MongoDB
-- PyMySQL
-- PyMongo
-- Streamlit
-- pandas
-- python-dotenv
+## First-time setup (Windows)
 
-## Project Structure
+Follow the steps below **in order**. Run the commands in the VS Code PowerShell terminal, from the project folder unless stated otherwise.
 
-```text
-netflix-review-app/
-├── data/                  # Original and cleaned datasets
-├── db/
-│   ├── mariadb.py         # MariaDB connection, ratings and watchlist operations
-│   ├── mongodb.py         # MongoDB reviews: CRUD, browsing, advanced queries
-│   └── catalogue.py       # Catalogue browsing and movie details
-├── docs/
-│   ├── catalogue_api.md
-│   ├── reviews_api.md
-│   ├── mongodb_model.md
-│   ├── mongodb_handover.md
-│   ├── review_dataset_notes.md
-│   ├── advanced_query_results.md
-│   ├── mongodb_test_results.md
-│   ├── catalogue_test_results.md
-│   ├── ratings_watchlist_api.md
-│   ├── sql_test_results.md
-│   ├── er_diagram.png
-│   └── er_diagram.drawio
-├── scripts/
-│   ├── import_movies.py
-│   ├── init_mongodb.py
-│   ├── convert_reviews_to_mongo.py
-│   ├── convert_movies_to_mongo.py
-│   ├── tag_reviews.py
-│   └── performance_mongodb.py
-├── sql/
-│   ├── schema.sql
-│   ├── validate_catalogue.sql
-│   └── advanced_queries.sql
-├── tests/
-│   ├── test_catalogue.py
-│   ├── test_ratings_watchlist.py
-│   └── test_reviews.py
-├── .env                   # Local credentials (not committed)
-└── README.md
-```
+### 1. Download the project
 
-## Local Setup — MariaDB Catalogue
-
-### 1. Clone the repository
-
-Clone the GitHub repository and open its root directory in VS Code.
-
-### 2. Install Python dependencies
-
-Using an activated Python virtual environment:
+Clone the Streamlit integration branch:
 
 ```powershell
-pip install pymysql python-dotenv pandas
+git clone --single-branch --branch nusrat/cinevault-streamlit https://github.com/tsuki5281/netflix-review-app.git
+cd netflix-review-app
 ```
 
-Additional packages may be required for the MongoDB and Streamlit modules.
+You should now be in the folder that contains `app.py`, `requirements.txt`, `db/`, `screens/` and `scripts/`.
 
-### 3. Configure environment variables
+### 2. Set up Python
 
-Create a `.env` file in the project root:
+Create and activate a virtual environment, then install the project packages and Streamlit:
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt streamlit
+```
+
+**What success looks like:**
+
+- The terminal prompt starts with `(.venv)` after activation.
+- Package installation finishes with a message similar to:
+
+```text
+Successfully installed ... streamlit ... pandas ... PyMySQL ... pymongo ...
+```
+
+If PowerShell blocks the activation script, run this once in the same terminal, then activate again:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+```
+
+### 3. Create your local database settings
+
+Copy the example environment file and open the new `.env` file:
+
+```powershell
+Copy-Item .env.example .env
+notepad .env
+```
+
+Enter your own MariaDB username and password. Keep the database name and MongoDB settings as shown unless your local setup is different:
 
 ```dotenv
 DB_HOST=localhost
@@ -97,119 +81,214 @@ DB_PORT=3306
 DB_USER=your_username
 DB_PASSWORD=your_password
 DB_NAME=netflix_review_db
+
+MONGO_URI=mongodb://localhost:27017
+MONGO_DB_NAME=netflix_review_db
 ```
 
-Replace the example values with your local MariaDB credentials.
+Save and close the file. **Never commit `.env` to GitHub** because it contains your local database credentials. The `.env` file is ignored by Git.
 
-**Do not commit `.env` to GitHub.**
+### 4. Create the MariaDB database and tables
 
-### 4. Create the MariaDB database
+1. Open HeidiSQL and connect to your local MariaDB server.
+2. Run this query to create the database:
 
-In HeidiSQL, create a database named `netflix_review_db`, then execute:
+```sql
+CREATE DATABASE netflix_review_db;
+```
+
+3. Select `netflix_review_db` in HeidiSQL.
+4. Open and execute these three files **one at a time, in this order**:
+
+| Order | File | What it creates |
+|---:|---|---|
+| 1 | `sql/schema.sql` | The eight core tables for users, movies, genres, actors, ratings and watchlists. |
+| 2 | `sql/authentication.sql` | The `user_credentials` table for official-account password hashes. |
+| 3 | `sql/watched_movies.sql` | The `watched_movies` table for member viewing history. |
+
+**Check that the tables were created:** run:
+
+```sql
+SHOW TABLES;
+```
+
+You should see **10 tables**: `actors`, `genres`, `movie_actors`, `movie_genres`, `movies`, `ratings`, `user_credentials`, `users`, `watched_movies` and `watchlist`.
+
+### 5. Import the movie and review data
+
+Run each command below from the project root. Wait for the success message before moving to the next command.
+
+**A. Import the movie catalogue into MariaDB**
+
+```powershell
+python -m scripts.import_movies
+```
+
+Expected output:
 
 ```text
-sql/schema.sql
+Dataset loaded successfully: 4677 movies
+Movie catalogue imported successfully!
 ```
 
-This creates the eight relational tables required by the application.
-
-### 5. Import the movie catalogue
-
-Ensure that `data/netflix_movies_cleaned.csv` exists.
-
-Run the import script from the repository root:
+**B. Initialise MongoDB**
 
 ```powershell
-python scripts/import_movies.py
+python -m scripts.init_mongodb
 ```
 
-The catalogue contains 4,677 cleaned movie records, along with their genre and actor associations.
+Expected output:
 
-### 6. Run catalogue tests
+```text
+MongoDB database: netflix_review_db
+Collection 'reviews' ready with validation rules
+Indexes: _id_, uniq_user_movie, movie_newest
+```
 
-From the repository root:
+**C. Import the sample reviews**
 
 ```powershell
-python -m tests.test_catalogue
+python -m scripts.convert_reviews_to_mongo
 ```
 
-The tests verify movie retrieval, filtering, sorting, pagination and selected edge cases.
+Expected output will include:
 
-**Note:** The full-catalogue validation currently performs thousands of database queries and is intended for development verification rather than routine application startup.
-
-## Ratings and Watchlist
-
-The application supports movie ratings and personal watchlists through MariaDB.
-
-- **Add ratings:** Users can rate movies from 1 to 5 stars.
-- **Manage ratings:** Users can retrieve, update and delete their ratings.
-- **Manage watchlists:** Users can add movies to and remove movies from their personal watchlists.
-- **Rating summaries:** Calculate average ratings and rating counts for movies.
-- **Highest-rated movies:** Retrieve movies based on their average ratings and minimum rating counts.
-
-The ratings and watchlist operations include input validation and error handling to prevent invalid ratings, duplicate entries and references to non-existent users or movies.
-
-For function details, see [`docs/ratings_watchlist_api.md`](docs/ratings_watchlist_api.md).
-
-For SQL query examples and testing results, see [`docs/sql_test_results.md`](docs/sql_test_results.md).
-
-## Using the Catalogue Functions
-
-```python
-from db.catalogue import browse_movies, get_movie_details
-
-# Browse movies
-movies = browse_movies()
-
-# Search by title
-movies = browse_movies(title="love")
-
-# Filter by multiple genres
-movies = browse_movies(
-    genres=["Horror Movies", "Thrillers"],
-    genre_match="all"
-)
-
-# Filter by multiple actors
-movies = browse_movies(
-    actors=["Rajneesh Duggal", "Adah Sharma"],
-    actor_match="any"
-)
-
-# Combine filters
-movies = browse_movies(
-    genres=["Horror Movies", "Thrillers"],
-    actors=["Rajneesh Duggal", "Adah Sharma"],
-    genre_match="all",
-    actor_match="all",
-    limit=10
-)
-
-# View a movie
-movie = get_movie_details("s10")
+```text
+Read 144 rows from data/reviews.csv
+Added ... imported reviews to watched history
+Converted and inserted: ... reviews | Skipped: ...
+Review dataset converted successfully!
 ```
 
-For full parameters, return formats and integration instructions, see [`docs/catalogue_api.md`](docs/catalogue_api.md).
+The numbers may vary if the CSV contains invalid rows or the script has already been run. This script creates the sample demo users in MariaDB and imports their reviews into MongoDB. It also adds the imported review movies to `watched_movies`, so sample review activity is reflected in Watched History. The importer can be rerun without creating duplicate watched-history entries.
 
-## Database Design
+**D. Copy the movie documents into MongoDB**
 
-MariaDB contains eight tables:
+```powershell
+python -m scripts.convert_movies_to_mongo
+```
 
-`movies`, `genres`, `actors`, `movie_genres`, `movie_actors`, `users`, `ratings` and `watchlist`.
+Expected output:
 
-The schema is defined in `sql/schema.sql`, and the ER diagram is available in `docs/er_diagram.png`.
+```text
+Read from MariaDB: 4677 movies, ... movie-genre links, ... movie-actor links
+Written to MongoDB 'movies' collection: 4677 documents
+Example document:
+{ ... }
+Conversion completed successfully!
+```
 
-MongoDB is used for review documents (`reviews` collection). The document model is described in `docs/mongodb_model.md`; setup, function contracts and sample calls are in `docs/mongodb_handover.md`.
+The movie-genre and movie-actor link counts and example document will depend on the imported catalogue. The important checks are **4,677 documents written** and `Conversion completed successfully!`.
 
-## Development Status
+### 6. Add the demo ratings and activity
 
-- **Catalogue foundation:** Implemented and tested.
-- **Ratings and watchlist:** Implemented and tested.
-- **MongoDB reviews:** Implemented and tested.
-- **Streamlit interface:** Under development.
+Run these optional scripts to give the prepared demo profiles sample ratings, watched history and watchlist entries:
 
-## Team Integration
+```powershell
+python -m scripts.seed_demo_ratings
+python -m scripts.seed_demo_activity
+```
 
-The catalogue module uses `movie_id` as the unique movie identifier. Other modules should use the same ID when associating ratings, watchlist entries and MongoDB reviews with catalogue movies.
+For the ratings script, a fresh database should show output similar to:
 
-Each developer must initialise their own local database. The GitHub repository contains the schema and import scripts, not the populated MariaDB database itself.
+```text
+Demo rating seed completed!
+New ratings inserted: 19
+Existing ratings preserved: 0
+Total demo rating assignments: 19
+```
+
+The numbers change when the script is rerun. Existing ratings are preserved. The activity script also skips records that already exist. On completion, it reports how many watched-history and watchlist entries were newly added; entries already in the database are left unchanged. The final message should confirm that demo activity setup is complete.
+
+Example final message:
+
+```text
+Demo activity setup complete.
+```
+
+The featured activity profiles are:
+
+| Demo profile | Watched movies | Watchlist movies |
+|---|---:|---:|
+| `sample_user_06` | 4 | 2 |
+| `sample_user_07` | 3 | 3 |
+| `sample_user_11` | 3 | 4 |
+
+These are prepared demonstration records, not real user activity.
+
+## Run CineVault
+
+Whenever you want to use the app:
+
+1. Start the MariaDB and MongoDB services.
+2. Open the `netflix-review-app` folder in VS Code.
+3. Open a terminal in the project root and activate the virtual environment:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+4. Launch Streamlit:
+
+```powershell
+streamlit run app.py
+```
+
+Expected output includes a local address similar to:
+
+```text
+You can now view your Streamlit app in your browser.
+Local URL: http://localhost:8501
+```
+
+Open the local URL in your browser. **Set the theme to Dark Mode** using **⋮ → Settings → Theme → Dark** before exploring the application.
+
+## Sign in
+
+You can access CineVault in either of these ways:
+
+- **Demo Profile:** choose a prepared demo account on the login screen. Demo profiles are available after the sample review import has completed.
+- **Create Account:** register a new account with a username and password. Passwords are stored as Argon2id hashes in MariaDB.
+
+The featured demo usernames are `sample_user_06`, `sample_user_07` and `sample_user_11`. Select them from the Demo Profile area on the login screen; no password is required for demo access.
+
+## Main features
+
+| Page | What you can do |
+|---|---|
+| **Home** | Explore featured movies and community highlights. |
+| **Search** | Search by title, actor or genre, apply filters and sort results. |
+| **Movie Details** | View movie information, submit ratings and reviews, and update your watchlist. |
+| **My Activity** | View and manage your ratings, reviews, watched history and watchlist. |
+
+## Testing and documentation
+
+- [Application Testing Checklist](docs/application_test_checklist.md): manual steps for checking the main app features and recording issues.
+- [Streamlit Implementation](docs/streamlit_implementation.md): application screens, interactions and database integration.
+- [Streamlit Testing](docs/streamlit_testing.md): automated tests and testing approach.
+- [Catalogue API](docs/catalogue_api.md): movie catalogue functions.
+- [Ratings and Watchlist API](docs/ratings_watchlist_api.md): ratings, watchlist and watched-history functions.
+- [Reviews API](docs/reviews_api.md): MongoDB review functions.
+- [MongoDB Model](docs/mongodb_model.md): document and collection design.
+- [MariaDB ER Diagram](docs/er_diagram.png): relational database design.
+
+## Troubleshooting
+
+| Problem | Check this first |
+|---|---|
+| `python` is not recognised | Activate `.venv` first. If Python is still not found, close and reopen the terminal and check that Python 3.13 is installed. Use `py -3.13` for the virtual-environment creation command. |
+| PowerShell will not activate `.venv` | Run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` in the current terminal, then activate again. |
+| MariaDB connection error | Check the MariaDB service and the `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` and `DB_NAME` values in `.env`. |
+| MongoDB connection timeout | Check that MongoDB Server is running and `MONGO_URI` in `.env` is correct. |
+| A table does not exist | Re-run the SQL files in Step 4 in the stated order, using the `netflix_review_db` database. |
+| Demo profiles are missing | Run `python -m scripts.convert_reviews_to_mongo` after importing the movie catalogue. |
+| Movie or review data is missing | Check that all four imports in Step 5 completed successfully, then run the demo seeding commands in Step 6. |
+| App colours or text look wrong | Change Streamlit's theme to **Dark**. CineVault's design does not support Light or Automatic Mode. |
+
+## Technology stack
+
+- **Frontend:** Streamlit
+- **Relational database:** MariaDB
+- **Document database:** MongoDB
+- **Language:** Python
+- **Libraries:** pandas, PyMySQL, PyMongo, python-dotenv and argon2-cffi

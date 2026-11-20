@@ -1,1 +1,8 @@
 # List of Python packages 
+
+streamlit
+pandas
+PyMySQL
+python-dotenv
+pymongo
+argon2-cffi
