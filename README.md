@@ -32,8 +32,8 @@ Follow the steps below **in order**. Run the commands in the VS Code PowerShell 
 Clone the Streamlit integration branch:
 
 ```powershell
-git clone --single-branch --branch nusrat/cinevault-streamlit https://github.com/tsuki5281/netflix-review-app.git
-cd netflix-review-app
+git clone https://github.com/tsuki5281/cinevault-app.git
+cd cinevault-app
 ```
 
 You should now be in the folder that contains `app.py`, `requirements.txt`, `db/`, `screens/` and `scripts/`.
@@ -45,7 +45,7 @@ Create and activate a virtual environment, then install the project packages and
 ```powershell
 py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt streamlit
+python -m pip install -r requirements.txt 
 ```
 
 **What success looks like:**
