@@ -3,7 +3,7 @@
 
 ## 1. Overview
 
-This document records the advanced SQL queries implemented and tested for the Netflix Review Application using MariaDB.
+This document records the advanced SQL queries implemented and tested for CineVault using MariaDB.
 
 The queries focus on analysing movie ratings and retrieving useful information from the movie catalogue.
 
