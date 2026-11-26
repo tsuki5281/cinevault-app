@@ -270,7 +270,7 @@ The featured demo usernames are `sample_user_06`, `sample_user_07` and `sample_u
 - [Ratings and Watchlist API](docs/ratings_watchlist_api.md): ratings, watchlist and watched-history functions.
 - [Reviews API](docs/reviews_api.md): MongoDB review functions.
 - [MongoDB Model](docs/mongodb_model.md): document and collection design.
-- [MariaDB ER Diagram](docs/er_diagram.png): relational database design.
+- [MariaDB ER Diagram](docs/ER_Diagram_MariaDB_pic.png): relational database design.
 
 ## Troubleshooting
 
