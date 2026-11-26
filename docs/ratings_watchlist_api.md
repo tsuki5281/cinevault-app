@@ -3,22 +3,26 @@
 
 ## 1. Overview
 
-This module handles the ratings and watchlist features of the Netflix Review Application using MariaDB.
+This module manages user ratings, watchlists, watched history and movie rating statistics for CineVault using MariaDB.
 
-It allows users to:
-- Add ratings for movies.
-- View their existing ratings.
-- Update or delete their ratings.
-- Add movies to their watchlist.
-- View and remove movies from their watchlist.
-- View the average rating and total number of ratings for a movie.
-- Retrieve the highest-rated movies based on user ratings.
+It provides the following functionalities:
+
+- Add, retrieve, update and delete movie ratings.
+- Add movies to a user's watchlist, retrieve saved movies and remove entries.
+- Mark movies as watched, retrieve watched history and remove watched status.
+- Retrieve a user's rating history.
+- Calculate average ratings and total rating counts for movies.
+- Retrieve rating distributions across all five star levels.
+- Identify and retrieve the highest-rated movies based on user ratings.
+- Retrieve rating summaries for multiple movies.
+- Retrieve ratings submitted by multiple users for a specific movie.
+- Sort a filtered list of movies based on their average ratings and rating counts.
 
 **Files:**
-- `db/mariadb.py`: Contains the MariaDB connection helper and ratings and watchlist functions.
-- `sql/advanced_queries.sql`: Contains the advanced SQL queries.
+- `db/mariadb.py`: Contains the MariaDB connection helper and database functions for ratings, watchlists, watched history and rating statistics.
+- `sql/advanced_queries.sql`: Contains advanced SQL queries for movie rating analysis.
+- `sql/watched_movies.sql`: Contains the SQL table definition for watched movie records.
 - `docs/sql_test_results.md`: Records the SQL testing and verification results.
-
 
 
 ## 2. Ratings Management
@@ -214,12 +218,49 @@ from db.mariadb import remove_from_watchlist
 result = remove_from_watchlist(1, "s10")
 print(result)
 ```
+## 4. Watched History Management
 
-## 4. Rating Summaries and Advanced SQL
+Watched history was introduced as an additional user activity feature using a separate MariaDB table named `watched_movies`.
+
+#### `mark_as_watched(user_id, movie_id)`
+
+Records that a user has watched a particular movie.
+
+**Returns**
+- `True` if the record is added successfully.
+- `False` if the user has already marked the movie as watched.
+- Raises `ValueError` if the user ID or movie ID does not exist.
+
+#### `get_watched_movies(user_id)`
+
+Retrieves all movies marked as watched by a specific user.
+
+**Returns**
+
+A list of dictionaries containing:
+- `movie_id`
+- `title`
+- `watched_at`
+
+Results are ordered by the most recently watched movie.
+
+#### `remove_watched_status(user_id, movie_id)`
+
+Removes a movie from a user's watched history.
+
+**Returns**
+- `True` if a record is deleted successfully.
+- `False` if the record does not exist.
+
+Removing a watched record does not delete the user's rating or review.
+
+
+## 5. Rating Summaries and Advanced SQL
+This section covers the retrieval, calculation and analysis of movie ratings using MariaDB. It includes aggregate functions, JOIN operations, grouping, filtering and batch retrieval.
 
 ### `get_average_rating(movie_id)`
 
-Calculates the average rating given by users for a specific movie.
+Calculates the average rating submitted by users for a specific movie.
 
 **Parameters**
 
@@ -318,158 +359,6 @@ for movie in movies:
         movie["rating_count"]
     )
 ```
-
-**SQL features used**
-
-- `JOIN` combines movie details with their ratings.
-- `AVG()` calculates the average rating.
-- `COUNT()` counts the number of ratings.
-- `GROUP BY` groups the ratings by movie.
-- `HAVING` filters movies based on their rating count.
-- `ORDER BY` sorts the movies by their average rating and rating count.
-- `LIMIT` controls the number of results returned.
-
-## 5. Error Handling and Validation
-
-I added input validation and error handling to make sure that invalid data and duplicate entries are handled properly.
-
-**Rating validation**
-
-Ratings are restricted to integers between 1 and 5. If an invalid rating is entered, the function raises `ValueError`.
-
-**Database error handling**
-
-The `add_rating()` and `add_to_watchlist()` functions handle MariaDB integrity errors using the following error codes:
-
-| Error Code | Meaning | Behaviour |
-|---|---|---|
-| 1062 | Duplicate entry | Returns `False` |
-| 1452 | Foreign key constraint failure | Raises `ValueError` |
-| Other | Unexpected integrity error | Raises the original exception |
-
-If an insertion fails, `connection.rollback()` is used to undo the unsuccessful operation.
-
-**Database constraints**
-
-The existing database schema already includes the following constraints:
-
-- Composite primary keys prevent the same user from rating or adding the same movie to their watchlist more than once.
-- Foreign keys ensure that the user and movie IDs exist in their respective tables.
-- The `CHECK` constraint restricts movie ratings to values between 1 and 5.
-
-## 6. SQL Implementation
-
-The module uses different SQL statements depending on the operation:
-
-- `INSERT` to add ratings and watchlist entries.
-- `SELECT` to retrieve ratings and watchlist records.
-- `UPDATE` to change existing ratings.
-- `DELETE` to remove ratings and watchlist entries.
-- `JOIN` to retrieve movie details together with watchlist records.
-- Aggregate functions to calculate average ratings and rating counts.
-- `GROUP BY` and `HAVING` to retrieve movies based on their ratings.
-
-Parameterised SQL queries are used when passing values into the database.
-
-These functions allow users to manage their ratings and watchlists while making use of the existing database constraints.
-
-## 7. Integration Notes
-
-### For Member 1 — Catalogue
-
-The existing `movie_id` returned by `browse_movies()` or `get_movie_details()` can be used when adding ratings or movies to a watchlist.
-
-The ratings and watchlist functions do not modify the movie catalogue.
-
-### For Nusrat — Streamlit UI
-
-Import the required functions from `db.mariadb`:
-
-```python
-from db.mariadb import (
-    add_rating,
-    get_rating,
-    update_rating,
-    delete_rating,
-    add_to_watchlist,
-    get_watchlist,
-    remove_from_watchlist,
-    get_average_rating,
-    get_rating_count
-)
-```
-
-The UI can use these functions to:
-- Allow users to submit and update their ratings.
-- Display a user's existing rating.
-- Allow users to add or remove movies from their watchlist.
-- Display the movies saved in their watchlist.
-- Show the average rating and total number of ratings for a movie.
-
-The UI should also handle `True` and `False` return values and catch `ValueError` exceptions to display suitable messages.
-
-### For Weibin — MongoDB Reviews
-
-The same `movie_id` from the MariaDB catalogue should be used when linking MongoDB review documents to movies.
-
-The ratings and watchlist module only handles data stored in MariaDB and does not modify MongoDB reviews.
-
-## 8. Local Setup
-
-1. Install the required dependencies, including `pymysql` and `python-dotenv`.
-2. Make sure MariaDB is installed and running.
-3. Configure the database credentials in the local `.env` file.
-4. Create the database specified by `DB_NAME`.
-5. Execute `sql/schema.sql` if the database has not been set up yet.
-6. Import the movie catalogue by running:
-
-```powershell
-python -m scripts.import_movies
-```
-
-7. Make sure the required test users exist in the `users` table.
-8. Import the required functions from `db.mariadb` when using the ratings and watchlist features.
-
-**Note:** The database records are stored locally and are not automatically included in GitHub. Each team member needs to set up their own local MariaDB database.
-
-## 9. Testing Results
-
-The ratings and watchlist functions were tested using the local MariaDB database.
-
-The tests covered:
-
-- Adding, retrieving, updating and deleting ratings.
-- Invalid rating values such as 0, 6 and negative numbers.
-- Adding duplicate ratings for the same user and movie.
-- Testing invalid user IDs and movie IDs.
-- Updating and deleting ratings that do not exist.
-- Adding and retrieving movies from the watchlist.
-- Adding duplicate watchlist entries.
-- Testing invalid user IDs and movie IDs for watchlist operations.
-- Removing movies that are not in the watchlist.
-- Calculating average ratings and rating counts.
-- Retrieving the highest-rated movies.
-- Testing invalid `minimum_ratings` and `limit` values.
-
-The detailed SQL query testing results are recorded separately in `docs/sql_test_results.md`.
-
-## 10. Known Limitations
-
-- Each user can only have one rating for each movie.
-- Each movie can only appear once in a user's watchlist.
-- Ratings are restricted to whole numbers from 1 to 5.
-- The highest-rated movies function uses a default minimum of two ratings and returns up to ten movies.
-- The functions require an active connection to the local MariaDB database.
-- The ratings and watchlist records are managed separately from the MongoDB movie reviews.
-
-## 11. Streamlit Integration Updates
-
-The MariaDB module was extended to support additional user activity and rating information required by the Streamlit application.
-
-The original rating CRUD, watchlist management, average-rating calculation, rating count and highest-rated movie retrieval functions remain available.
-
-### 11.1 Additional Rating Functions
-
 #### `get_rating_distribution(movie_id)`
 
 Retrieves the number of ratings received at each star level for a specific movie.
@@ -493,6 +382,16 @@ Example:
 
 This function supports displaying the distribution of community ratings.
 
+**SQL features used**
+
+- `JOIN` combines movie details with their ratings.
+- `AVG()` calculates the average rating.
+- `COUNT()` counts the number of ratings.
+- `GROUP BY` groups the ratings by movie.
+- `HAVING` filters movies based on their rating count.
+- `ORDER BY` sorts the movies by their average rating and rating count.
+- `LIMIT` controls the number of results returned.
+
 #### `get_user_ratings(user_id)`
 
 Retrieves all movie ratings submitted by a specific user.
@@ -512,43 +411,7 @@ Results are ordered by the most recently updated rating.
 
 This function supports the My Activity page, allowing users to view their personal rating history.
 
-### 11.2 Watched History Management
-
-Watched history was introduced as an additional user activity feature using a separate MariaDB table named `watched_movies`.
-
-#### `mark_as_watched(user_id, movie_id)`
-
-Records that a user has watched a particular movie.
-
-**Returns**
-- `True` if the record is added successfully.
-- `False` if the user has already marked the movie as watched.
-- Raises `ValueError` if the user ID or movie ID does not exist.
-
-#### `get_watched_movies(user_id)`
-
-Retrieves all movies marked as watched by a specific user.
-
-**Returns**
-
-A list of dictionaries containing:
-- `movie_id`
-- `title`
-- `watched_at`
-
-Results are ordered by the most recently watched movie.
-
-#### `remove_watched_status(user_id, movie_id)`
-
-Removes a movie from a user's watched history.
-
-**Returns**
-- `True` if a record is deleted successfully.
-- `False` if the record does not exist.
-
-Removing a watched record does not delete the user's rating or review.
-
-### 11.3 Batch Rating Retrieval Functions
+### 5.2 Batch Rating Retrieval Functions
 
 The following functions were introduced to support efficient integration between the catalogue, ratings and review modules.
 
@@ -588,7 +451,7 @@ This function is used by the Streamlit Search interface to display community rat
 
 #### `get_movie_user_ratings(movie_id, user_ids)`
 
-Retrieves star ratings given by multiple users for a specific movie in a single database operation.
+Retrieves star ratings given by multiple users for a specific movie using batched database queries.
 
 **Parameters**
 - `movie_id`: String representing the movie ID.
@@ -640,26 +503,101 @@ The function removes duplicate movie IDs and processes them in batches of up to 
 
 The Streamlit Search interface uses this function after catalogue filtering to ensure that Highest Rated sorting is applied across all matching movies before displaying paginated results.
 
-### 11.4 Watched History Database Setup
+## 6. Error Handling and Validation
 
-Watched history uses a separate MariaDB table named `watched_movies`.
+The MariaDB module implements input validation and database error handling to maintain data integrity and ensure that invalid or duplicate entries are handled appropriately.
 
-The table creation script is located at:
+**Rating Validation**
 
-`sql/watched_movies.sql`
+The `add_rating()` and `update_rating()` functions validate that ratings are integers between 1 and 5. Invalid values raise a `ValueError`.
 
-Run this script after creating the original database schema to enable the watched-history functions.
+**Duplicate Entry Handling**
 
-The table includes:
-- `user_id`
-- `movie_id`
-- `watched_at`
+Duplicate entries are handled using database integrity constraints. If a duplicate rating or watchlist entry is detected, the corresponding function returns False.
 
-A composite primary key (`user_id`, `movie_id`) prevents duplicate watched records. Foreign keys maintain references to existing users and movies.
+**Foreign Key Validation**
 
-The watched-history implementation is an additional SQL script and does not require rewriting the original `sql/schema.sql`.
+Foreign key constraints ensure that ratings, watchlist entries and watched-history records reference valid users and movies. Invalid references raise ValueError.
 
-### 11.5 Integration with the Streamlit Application
+**Database error handling**
+
+The add_rating(), add_to_watchlist() and mark_as_watched() functions handle MariaDB integrity errors using the following error codes:
+
+| Error Code | Meaning | Behaviour |
+|---|---|---|
+| 1062 | Duplicate entry | Returns `False` |
+| 1452 | Foreign key constraint failure | Raises `ValueError` |
+| Other | Unexpected integrity error | Raises the original exception |
+
+If an insertion fails, `connection.rollback()` is used to undo the unsuccessful operation.
+
+**Database constraints**
+
+The existing database schema already includes the following constraints:
+
+- Composite primary keys prevent the same user from rating or adding the same movie to their watchlist more than once.
+- Foreign keys ensure that the user and movie IDs exist in their respective tables.
+- The `CHECK` constraint restricts movie ratings to values between 1 and 5.
+- The `watched_movies` table uses a composite primary key to prevent the same movie from being marked as watched more than once by the same user.
+
+## 7. SQL Implementation
+
+The MariaDB module uses different SQL statements depending on the database operation:
+
+- `INSERT` to add ratings, watchlist entries and watched-history records.
+- `SELECT` to retrieve ratings, movie details, watchlist records and watched history.
+- `UPDATE` to modify existing movie ratings.
+- `DELETE` to remove ratings, watchlist entries and watched-history records.
+- `JOIN` to combine movie information with related ratings, watchlist entries and user activity.
+- `LEFT JOIN` to retrieve movie rating statistics while retaining movies that have no ratings.
+- Aggregate functions such as `AVG()`, `COUNT()`, `MAX()` and `MIN()` to calculate movie rating statistics.
+- `GROUP BY` to group rating records by movie or star level.
+- `HAVING` to filter movies based on their total number of ratings.
+- `ORDER BY` to arrange retrieved records according to rating dates or rating values.
+- `LIMIT` to restrict the number of results returned by the highest-rated movies query.
+
+Parameterised SQL queries are used when passing values into the database to support safer query execution.
+
+For functions that retrieve rating information for multiple movies or users, identifiers are processed in batches of up to 500 per database query. The `get_movies_sorted_by_rating()` function performs its final sorting in Python after retrieving the rating information from MariaDB.
+
+These SQL operations allow CineVault to manage user activity, retrieve movie information and analyse community ratings while maintaining data integrity.
+
+## 8. Integration Notes
+
+### For Member 1 — Catalogue
+
+The existing `movie_id` returned by `browse_movies()` or `get_movie_details()` can be used when adding ratings or movies to a watchlist.
+
+The ratings and watchlist functions do not modify the movie catalogue.
+
+### For Nusrat — Streamlit UI
+
+Import the required functions from `db.mariadb`:
+
+```python
+from db.mariadb import (
+    add_rating,
+    get_rating,
+    update_rating,
+    delete_rating,
+    get_average_rating,
+    get_rating_count,
+    get_rating_distribution,
+    get_highest_rated_movies,
+    add_to_watchlist,
+    get_watchlist,
+    remove_from_watchlist,
+    mark_as_watched,
+    get_watched_movies,
+    remove_watched_status,
+    get_user_ratings,
+    get_movie_rating_summaries,
+    get_movie_user_ratings,
+    get_movies_sorted_by_rating
+)
+
+```
+### Integration with the Streamlit Application
 
 The MariaDB module supplies numerical rating information and user movie activity to the Streamlit interface.
 
@@ -673,3 +611,73 @@ The integration supports:
 - Maintaining user-specific watchlists and activity records.
 
 The Streamlit layer combines catalogue, rating and review information for display while keeping the corresponding database operations within their respective modules.
+
+The UI can use these functions to:
+- Allow users to submit, retrieve, update and delete movie ratings.
+- Display a user's existing ratings and personal rating history.
+- Calculate and display average ratings and total rating counts.
+- Display rating distributions across all five star levels.
+- Retrieve and sort movies according to their community ratings.
+- Allow users to add or remove movies from their watchlist.
+- Display movies saved in a user's watchlist.
+- Mark movies as watched and manage watched history.
+- Retrieve individual user ratings associated with movie reviews.
+
+The UI should handle `True` and `False` return values and catch `ValueError` exceptions to display suitable messages.
+
+### For Weibin — MongoDB Reviews
+
+The same `movie_id` from the MariaDB catalogue should be used when linking MongoDB review documents to movies.
+
+The ratings and watchlist module only handles data stored in MariaDB and does not modify MongoDB reviews.
+
+## 9. Local Setup
+
+1. Install the required dependencies, including `pymysql` and `python-dotenv`.
+2. Make sure MariaDB is installed and running.
+3. Configure the database credentials in the local `.env` file.
+4. Create the database specified by `DB_NAME`.
+5. Execute `sql/schema.sql` if the database has not been set up yet.
+6. Execute `sql/watched_movies.sql` to create the `watched_movies` table required for recording users' watched movies.
+7. Import the movie catalogue by running:
+
+```powershell
+python -m scripts.import_movies
+```
+
+8. Make sure the required test users exist in the `users` table.
+9. Import the required functions from `db.mariadb` when using the ratings and watchlist features.
+
+**Note:** The database records are stored locally and are not automatically included in GitHub. Each team member needs to set up their own local MariaDB database.
+
+## 10. Testing Results
+
+The ratings and watchlist functions were tested using the local MariaDB database.
+
+The tests covered:
+
+- Adding, retrieving, updating and deleting ratings.
+- Invalid rating values such as 0, 6 and negative numbers.
+- Adding duplicate ratings for the same user and movie.
+- Testing invalid user IDs and movie IDs.
+- Updating and deleting ratings that do not exist.
+- Adding and retrieving movies from the watchlist.
+- Adding duplicate watchlist entries.
+- Testing invalid user IDs and movie IDs for watchlist operations.
+- Removing movies that are not in the watchlist.
+- Calculating average ratings and rating counts.
+- Retrieving the highest-rated movies.
+- Testing invalid `minimum_ratings` and `limit` values.
+
+The detailed SQL query testing results are recorded separately in `docs/sql_test_results.md`.
+
+## 11. Known Limitations
+
+- Each user can only have one rating for each movie.
+- Each movie can only appear once in a user's watchlist.
+- Ratings are restricted to whole numbers from 1 to 5.
+- The highest-rated movies function uses a default minimum of two ratings and returns up to ten movies.
+- The functions require an active connection to the local MariaDB database.
+- The ratings and watchlist records are managed separately from the MongoDB movie reviews.
+- Each user can only mark a particular movie as watched once.
+- Batch rating retrieval functions process movie or user IDs in groups of up to 500 per database query.
