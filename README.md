@@ -40,29 +40,52 @@ You should now be in the folder that contains `app.py`, `requirements.txt`, `db/
 
 ### 2. Set up Python
 
-Create and activate a virtual environment, then install the project packages and Streamlit:
+First, check which Python versions are installed and detected by Windows:
+
+```powershell
+py --list
+```
+
+Create a virtual environment using Python 3.13:
 
 ```powershell
 py -3.13 -m venv .venv
+```
+
+If using another Python version that has been tested with the project dependencies, replace `3.13` with that version. For example:
+
+```powershell
+py -3.14 -m venv .venv
+```
+
+Activate the virtual environment:
+
+```powershell
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt 
 ```
 
-**What success looks like:**
-
-- The terminal prompt starts with `(.venv)` after activation.
-- Package installation finishes with a message similar to:
-
-```text
-Successfully installed ... streamlit ... pandas ... PyMySQL ... pymongo ...
-```
-
-If PowerShell blocks the activation script, run this once in the same terminal, then activate again:
+If PowerShell blocks the activation script because script execution is disabled, run the following commands in the same terminal:
 
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
 ```
+
+This temporarily allows scripts to run within the current PowerShell session without permanently changing the computer's execution policy. Repeat the commands if a new terminal session blocks activation again.
+
+Once activated, verify the Python version and install the project dependencies:
+
+```powershell
+python --version
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+**What success looks like:**
+
+- The terminal prompt starts with `(.venv)`.
+- `python --version` displays the Python version used to create the virtual environment.
+- Package installation completes successfully, including Streamlit, pandas, PyMySQL, PyMongo and other required packages.
 
 ### 3. Create your local database settings
 
