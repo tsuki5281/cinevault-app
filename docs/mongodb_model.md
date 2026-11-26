@@ -87,7 +87,7 @@ Not indexed on purpose: `tags` and `spoiler`. With 144 reviews, filtering a movi
 ## 7. Checking it in MongoDB Compass
 
 1. Connect to `mongodb://localhost:27017`.
-2. Open `netflix_review_db` → `reviews`.
+2. Open `cinevault-app_db` → `reviews`.
 3. **Documents** tab: browse the reviews. Filter example: `{ "movie_id": "s101" }`.
 4. **Indexes** tab: `_id_`, `uniq_user_movie`, `movie_newest`.
 5. **Validation** tab: shows the `$jsonSchema` rules.
