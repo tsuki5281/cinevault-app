@@ -215,7 +215,7 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
 
 
 def main() -> int:
-    output_dir = PROJECT_ROOT / "performance_results"
+    output_dir = PROJECT_ROOT / "performance" / "results"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     print("=" * 72)
