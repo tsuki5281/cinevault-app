@@ -1,219 +1,289 @@
 # CineVault Performance Analysis
 
-**Test date:** 13 November 2026  
+**Test date:** 27 November 2026  
 **Application:** CineVault (Streamlit)  
 **Testing type:** Local backend benchmarking and browser profiling
 
-## 1. Objective and scope
+## 1. Objective and Scope
 
-The performance evaluation examined the responsiveness and reliability of selected CineVault database operations, how those operations behaved under simulated concurrent requests, and the browser activity observed during common page transitions.
+The performance evaluation examined the responsiveness and reliability of selected CineVault database operations, their behaviour under simulated concurrent requests, and browser activity during common page transitions.
 
 The evaluation covered:
-
-- Response time and throughput of selected MariaDB and MongoDB functions.
+- Response time and throughput of selected MariaDB and MongoDB operations.
 - Backend behaviour with 1, 5 and 10 worker threads.
+- MongoDB indexing performance and MariaDB versus MongoDB query performance.
+- Browser network requests, scripting, rendering and painting during page navigation.
 - Successful and failed request counts.
-- Browser network activity and frontend scripting, rendering and painting during navigation.
 
-The tests were conducted locally. The concurrent tests simulate database-function calls from Python worker threads; they are not a simulation of multiple complete Streamlit browser sessions.
+All tests were conducted locally using the updated CineVault application.
 
-## 2. Test environment and methodology
+## 2. Test Environment and Methodology
 
 ### 2.1 Environment
 
 | Component | Configuration |
 |---|---|
-| Application framework | Streamlit 1.67.0 |
-| Operating environment | Windows local development machine |
+| Operating system | Windows 11 (10.0.26300-SP0) |
+| Python | 3.14.6 |
+| Logical CPU count | 20 |
+| Application framework | Streamlit |
 | Relational database | Local MariaDB server |
-| Document database | Local MongoDB server (Compass connection shown as `localhost:27017`) |
-| Frontend profiling | Chrome Developer Tools: Network and Performance panels |
-| Browser cache during Network tests | Disabled |
+| Document database | Local MongoDB server |
+| Frontend profiling | Chrome Developer Tools |
+| Network cache | Disabled |
 | Network throttling | No throttling |
 
-The exact CPU model, RAM capacity, Python version and database server versions were not recorded with the benchmark output. The results should therefore be interpreted as measurements from the local test machine, not as a hardware-independent performance guarantee.
+Testing was conducted on a local development machine. The exact CPU model, RAM capacity and database server versions were not recorded.
 
-### 2.2 Backend benchmark configuration
+### 2.2 Backend Benchmark Configuration
 
-The read-only script `scripts/benchmark_performance.py` called eight existing database operations:
+The read-only script `scripts/benchmark_performance.py` measured eight database operations:
 
-| Database | Operation | Function and test input |
+| Database | Operation | Function |
 |---|---|---|
-| MariaDB | Movie title search | `browse_movies(title="3 Idiots", limit=20)` |
-| MariaDB | Actor and genre filtering | `browse_movies()` with Horror Movies, Thrillers, Rajneesh Duggal and Adah Sharma using `all` matching |
-| MariaDB | Movie details | `get_movie_details("s10")` |
-| MariaDB | Search suggestions | `get_search_suggestions("Rajneesh", limit=5)` |
-| MariaDB | Highest-rated movies | `get_highest_rated_movies(minimum_ratings=2, limit=10)` |
-| MongoDB | Most-reviewed movies | `get_most_reviewed_movies(limit=10)` |
-| MongoDB | Community reviews | `get_movie_reviews("s101", hide_spoilers=True, limit=50)` |
-| MongoDB | Popular review tags | `get_popular_tags(10)` |
+| MariaDB | Movie title search | `browse_movies()` |
+| MariaDB | Actor and genre filtering | `browse_movies()` |
+| MariaDB | Movie details | `get_movie_details()` |
+| MariaDB | Search suggestions | `get_search_suggestions()` |
+| MariaDB | Highest-rated movies | `get_highest_rated_movies()` |
+| MongoDB | Most-reviewed movies | `get_most_reviewed_movies()` |
+| MongoDB | Community reviews | `get_movie_reviews()` |
+| MongoDB | Popular review tags | `get_popular_tags()` |
 
-Each operation was warmed up with 5 calls before the measured sequential run. Warm-up calls were not included in the result CSVs.
+Each operation was warmed up with 5 requests before measurement.
 
-| Test | Requests per operation | Worker threads | Number of operations | Measured requests |
-|---|---:|---:|---:|---:|
-| Sequential | 30 | 1 | 8 | 240 |
-| Concurrent | 50 | 1, 5 and 10 | 8 operations × 3 worker levels | 1,200 |
-| **Total measured** |  |  |  | **1,440** |
+| Test | Requests per operation | Worker threads | Total measured requests |
+|---|---:|---:|---:|
+| Sequential | 30 | 1 | 240 |
+| Concurrent | 50 | 1, 5 and 10 | 1,200 |
+| **Total** | | | **1,440** |
 
-For each operation, throughput was calculated as successful operations divided by the total elapsed time for that test batch. Average, median and P95 request latency were also recorded. P95 is the nearest-rank 95th percentile of the recorded request latencies.
+The benchmark recorded average response time, median, P95 latency, throughput and request failures. Throughput was calculated as successful operations divided by the total elapsed time.
 
-### 2.3 Frontend profiling method
+### 2.3 MongoDB-Specific Tests
 
-Chrome Developer Tools was used to capture four navigation transitions. For Network testing, the Network log was cleared before each transition, browser cache was disabled and throttling was set to `No throttling`. The visible Fetch and Preflight request rows were recorded.
+The script `scripts/performance_mongodb.py` conducted two additional tests, with each query timed over 200 runs.
 
-Separate Performance traces were captured for the four transitions. The Performance panel's trace range is reported below as a recording range; it is **not** treated as a verified page-load time. The panel's scripting, rendering and painting values are included as browser profiling observations.
+**Test 1: Review Index Comparison**
 
-## 3. Backend results
+Compared retrieving reviews using a collection scan (`COLLSCAN`) against the `movie_newest` compound index.
 
-### 3.1 Sequential response time and throughput
+**Test 2: MariaDB vs MongoDB Genre Search**
 
-| Database | Operation | Average (ms) | Median (ms) | P95 (ms) | Throughput (ops/s) |
-|---|---|---:|---:|---:|---:|
-| MariaDB | Movie title search | 28.387 | 27.282 | 38.604 | 35.225 |
-| MariaDB | Actor and genre filter | 32.680 | 28.577 | 49.474 | 30.598 |
-| MariaDB | Movie details | 29.736 | 26.885 | 49.911 | 33.627 |
-| MariaDB | Search suggestions | 35.092 | 32.606 | 46.974 | 28.495 |
-| MariaDB | Highest-rated movies | 28.009 | 25.807 | 44.574 | 35.701 |
-| MongoDB | Most-reviewed movies | 1.474 | 1.436 | 1.756 | 677.986 |
-| MongoDB | Community reviews | 29.514 | 26.566 | 48.980 | 33.880 |
-| MongoDB | Popular review tags | 0.724 | 0.695 | 0.908 | 1,380.472 |
+Compared a three-table MariaDB JOIN against a MongoDB query using the embedded `genres` array and multikey index. Both queries retrieved movies belonging to the "Dramas" genre.
 
-**Observations:**
+### 2.4 Frontend Profiling Method
 
-- The five measured MariaDB operations recorded average response times between approximately 28 and 35 ms.
-- Search suggestions had the highest average response time among the measured MariaDB operations (35.092 ms).
-- MongoDB's most-reviewed-movies and popular-review-tags operations returned aggregate results with average response times below 2 ms in this test.
-- Community review retrieval averaged 29.514 ms. Unlike the two aggregation operations, it retrieves review documents, so these timings represent different workloads and should not be treated as a direct comparison of database-system performance.
+Chrome Developer Tools was used to measure four navigation transitions:
 
-### 3.2 Concurrent response time and throughput
+1. Login → Home
+2. Home → Search
+3. Search → Movie Details
+4. Movie Details → My Activity
 
-Each worker-level test submitted 50 requests per operation to a Python `ThreadPoolExecutor`. The worker count limits how many calls execute at the same time. The table reports the measured average latency and batch throughput.
+For Network testing, the Network log was cleared before each transition, browser cache was disabled and throttling was set to No throttling. Request status, request type, transferred data and displayed request duration were recorded.
 
-| Operation | Workers | Average (ms) | P95 (ms) | Throughput (ops/s) |
-|---|---:|---:|---:|---:|
-| Movie title search | 1 | 28.845 | 33.977 | 34.622 |
-| Movie title search | 5 | 104.181 | 174.037 | 45.603 |
-| Movie title search | 10 | 190.818 | 251.758 | 47.220 |
-| Actor and genre filter | 1 | 27.764 | 36.814 | 35.976 |
-| Actor and genre filter | 5 | 102.487 | 164.236 | 46.992 |
-| Actor and genre filter | 10 | 188.520 | 258.571 | 48.067 |
-| Movie details | 1 | 28.383 | 45.483 | 35.193 |
-| Movie details | 5 | 101.840 | 142.664 | 47.613 |
-| Movie details | 10 | 189.974 | 251.550 | 48.114 |
-| Search suggestions | 1 | 34.188 | 48.144 | 29.222 |
-| Search suggestions | 5 | 106.423 | 168.226 | 44.795 |
-| Search suggestions | 10 | 203.838 | 270.392 | 44.988 |
-| Highest-rated movies | 1 | 28.553 | 47.880 | 34.982 |
-| Highest-rated movies | 5 | 100.713 | 127.066 | 48.100 |
-| Highest-rated movies | 10 | 189.309 | 268.565 | 48.471 |
-| Most-reviewed movies | 1 | 1.971 | 2.858 | 501.531 |
-| Most-reviewed movies | 5 | 3.017 | 5.425 | 1,558.084 |
-| Most-reviewed movies | 10 | 3.376 | 6.917 | 2,408.513 |
-| Community reviews | 1 | 35.757 | 56.115 | 27.936 |
-| Community reviews | 5 | 158.252 | 230.852 | 31.162 |
-| Community reviews | 10 | 274.889 | 385.965 | 33.868 |
-| Popular review tags | 1 | 0.814 | 1.060 | 1,187.917 |
-| Popular review tags | 5 | 1.431 | 2.092 | 2,970.021 |
-| Popular review tags | 10 | 2.258 | 4.150 | 2,672.753 |
+Separate Performance traces were captured for the same four transitions. Screenshots were enabled, and scripting, system, rendering and painting durations were recorded.
+
+The Performance trace range represents the selected recording duration, not a verified page-load time.
+
+## 3. Backend Performance Results
+
+### 3.1 Sequential Response Time and Throughput
+
+| Database | Operation | Average (ms) | P95 (ms) | Throughput (ops/s) |
+|---|---|---:|---:|---:|
+| MariaDB | Movie title search | 20.329 | 31.585 | 49.187 |
+| MariaDB | Actor and genre filter | 21.564 | 37.971 | 46.368 |
+| MariaDB | Movie details | 19.292 | 32.311 | 51.829 |
+| MariaDB | Search suggestions | 24.721 | 38.810 | 40.449 |
+| MariaDB | Highest-rated movies | 18.266 | 32.320 | 54.740 |
+| MongoDB | Most-reviewed movies | 1.757 | 2.768 | 568.950 |
+| MongoDB | Community reviews | 0.334 | 0.459 | 2,990.580 |
+| MongoDB | Popular review tags | 0.714 | 1.007 | 1,398.191 |
 
 **Observations:**
 
-- For the MariaDB operations, throughput generally increased between 1 and 5 workers, then showed smaller gains between 5 and 10 workers. For example, movie title search increased from 45.603 to 47.220 operations per second between 5 and 10 workers.
-- The higher worker counts also increased per-request latency. Movie title search average latency rose from 104.181 ms at 5 workers to 190.818 ms at 10 workers. This indicates diminishing throughput gains alongside longer individual request times under the tested concurrency levels.
-- MongoDB community review retrieval showed a similar latency increase: average response time rose from 35.757 ms with 1 worker to 274.889 ms with 10 workers, while throughput increased more modestly from 27.936 to 33.868 operations per second.
-- MongoDB aggregation operations completed very quickly in this dataset. Their calculated throughput is high and sensitive to small changes in elapsed time; these figures should be interpreted in the context of the small operation durations and local setup.
+- The five MariaDB operations recorded average response times between 18.266 and 24.721 ms.
+- Search suggestions recorded the highest average response time among the MariaDB operations.
+- MongoDB aggregation operations completed in under 2 ms on average.
+- Community review retrieval recorded an average response time of 0.334 ms. The query returned 4 non-spoiler reviews for movie `s101` from a collection containing 144 reviews.
 
-### 3.3 Backend reliability
+### 3.2 Concurrent Response Time and Throughput
 
-All measured requests completed without exceptions in the benchmark output:
+Each concurrent test submitted 50 requests per operation using Python's `ThreadPoolExecutor`.
 
-| Test group | Measured requests | Successful | Failed |
+| Operation | Workers | Average (ms) | Throughput (ops/s) |
+|---|---:|---:|---:|
+| Movie title search | 1 | 20.354 | 49.059 |
+| Movie title search | 5 | 58.649 | 81.935 |
+| Movie title search | 10 | 104.349 | 87.190 |
+| Actor and genre filter | 1 | 18.379 | 54.314 |
+| Actor and genre filter | 5 | 58.672 | 82.734 |
+| Actor and genre filter | 10 | 102.585 | 88.520 |
+| Movie details | 1 | 20.833 | 47.927 |
+| Movie details | 5 | 56.129 | 84.257 |
+| Movie details | 10 | 104.911 | 86.113 |
+| Search suggestions | 1 | 24.760 | 40.337 |
+| Search suggestions | 5 | 64.327 | 74.610 |
+| Search suggestions | 10 | 112.309 | 79.442 |
+| Highest-rated movies | 1 | 17.863 | 55.894 |
+| Highest-rated movies | 5 | 56.238 | 85.219 |
+| Highest-rated movies | 10 | 101.612 | 89.438 |
+| Most-reviewed movies | 1 | 1.745 | 567.272 |
+| Most-reviewed movies | 5 | 2.004 | 2,329.949 |
+| Most-reviewed movies | 10 | 3.460 | 2,321.543 |
+| Community reviews | 1 | 0.385 | 2,480.097 |
+| Community reviews | 5 | 0.890 | 4,710.360 |
+| Community reviews | 10 | 1.488 | 4,302.519 |
+| Popular review tags | 1 | 0.625 | 1,560.832 |
+| Popular review tags | 5 | 0.879 | 4,900.135 |
+| Popular review tags | 10 | 1.596 | 4,123.881 |
+
+**Observations:**
+
+- MariaDB throughput generally increased when worker threads increased from 1 to 5, with smaller improvements from 5 to 10 workers.
+- However, average response time also increased with more workers. For example, movie title search increased from 20.354 ms with one worker to 104.349 ms with ten workers.
+- MongoDB community review retrieval also showed increasing average response time as concurrency increased, from 0.385 ms to 1.488 ms.
+- MongoDB aggregation operations achieved high throughput due to their short execution times. Their throughput fluctuated at higher concurrency levels.
+
+These results indicate that additional concurrent requests increased throughput for several operations, but also increased individual request latency.
+
+### 3.3 Backend Reliability
+
+All benchmark requests completed without recorded exceptions.
+
+| Test group | Requests | Successful | Failed |
 |---|---:|---:|---:|
 | Sequential | 240 | 240 | 0 |
 | Concurrent | 1,200 | 1,200 | 0 |
 | **Total** | **1,440** | **1,440** | **0** |
 
-This confirms that no runtime exceptions were recorded for the tested calls and conditions. The benchmark's success count is based on whether an operation raised an exception; it does not independently validate every returned value against an expected result.
+The benchmark recorded a 100% success rate under the tested conditions. Success was determined by whether an operation raised an exception; returned values were not independently validated against expected results.
 
-## 4. Frontend results
+## 4. MongoDB-Specific Performance Results
 
-### 4.1 Network requests
+### 4.1 Review Index Comparison
 
-| Navigation transition | Requests | Fetch | Preflight | Data transferred | Average displayed request duration |
+The test retrieved reviews for movie `s28` (#Alive), sorted by newest first. The collection contained 144 review documents.
+
+| Method | Query Plan | Returned | Documents Examined | Keys Examined | Average (ms) |
+|---|---|---:|---:|---:|---:|
+| No index | SORT → COLLSCAN | 4 | 144 | 0 | 0.393 |
+| `movie_newest` index | FETCH → IXSCAN | 4 | 4 | 4 | 0.294 |
+
+The `movie_newest` index was approximately **1.3 times faster** in this test. It reduced the number of documents examined from 144 to 4, allowing MongoDB to retrieve the matching reviews in the required date order without performing a separate in-memory sort.
+
+### 4.2 MariaDB vs MongoDB Genre Search
+
+The test retrieved all movies belonging to the "Dramas" genre.
+
+| Method | Movies Returned | Average (ms) |
+|---|---:|---:|
+| MariaDB: Three-table JOIN | 2,039 | 4.439 |
+| MongoDB: Embedded genres array with multikey index | 2,039 | 3.341 |
+
+Both databases returned the same 2,039 movies. MongoDB was approximately 1.33 times faster in this particular test.
+
+The difference was small in absolute terms, and both databases were running locally. The result demonstrates the performance of these two query approaches under the tested conditions rather than proving that one database is generally faster.
+
+## 5. Frontend Performance Results
+
+### 5.1 Network Requests
+
+| Navigation Transition | Requests | Fetch | Preflight | Data Transferred | Average Request Duration |
 |---|---:|---:|---:|---:|---:|
-| Login → Home | 6 | 3 | 3 | 459 B | 229.17 ms |
-| Home → Search | 4 | 2 | 2 | 325 B | 230.75 ms |
-| Search → Movie Details | 4 | 2 | 2 | 306 B | 230.00 ms |
-| Movie Details → My Activity | 4 | 2 | 2 | 307 B | 231.00 ms |
-| **Total** | **18** | **9** | **9** | **1,397 B** |  |
+| Login → Home | 6 | 3 | 3 | 497 B | 228.17 ms |
+| Home → Search | 4 | 2 | 2 | 338 B | 229.00 ms |
+| Search → Movie Details | 8 | 4 | 4 | 750 B | 228.88 ms |
+| Movie Details → My Activity | 4 | 2 | 2 | 309 B | 230.50 ms |
+| **Total** | **22** | **11** | **11** | **1,894 B** | **229.00 ms** |
 
-All 18 displayed request rows returned HTTP status `200`. The average displayed request duration was calculated as the arithmetic mean of the Time values visible in each cleared Network panel.
+An additional inline SVG data image appeared in the Search → Movie Details capture. It was not counted as an HTTP request.
 
-The displayed request durations were consistent across the four captures, at approximately 229–231 ms. These values describe the individual Fetch and Preflight rows shown in the Network panel, not the total time for the browser to render each page. The captured request list also does not represent every possible resource or all application processing.
-
-### 4.2 Browser Performance traces
-
-| Navigation transition | Trace range | Scripting | Rendering | Painting | INP | CLS |
-|---|---:|---:|---:|---:|---:|---:|
-| Login → Home | 1.505 s | 217 ms | 29 ms | 14 ms | 17 ms | 0 |
-| Home → Search | 2.417 s | 192 ms | 52 ms | 33 ms | 9 ms | 0 |
-| Search → Movie Details | 2.182 s | 214 ms | 62 ms | 34 ms | 8 ms | 0 |
-| Movie Details → My Activity | 2.658 s | 614 ms | 102 ms | 38 ms | 14 ms | 0.03 |
-
-`INP` is the Interaction to Next Paint value shown by DevTools for the captured trace, and `CLS` is the Cumulative Layout Shift value. Largest Contentful Paint (LCP) was unavailable (`—`) in these recordings and is therefore not reported.
+All 22 displayed Fetch and Preflight requests returned HTTP status `200`.
 
 **Observations:**
 
-- The recorded INP values ranged from 8 to 17 ms. The CLS values were 0 for three transitions and 0.03 for Movie Details → My Activity.
-- Movie Details → My Activity recorded the highest scripting time (614 ms) and rendering time (102 ms) among the four traces. This makes My Activity a useful candidate for further profiling because it presents several groups of user-specific information.
-- The trace range is the selected recording window, not a verified page-load duration. Browser extensions were also active during the captures, which may have contributed to the recorded browser activity.
+- The four navigation transitions generated 22 HTTP requests and transferred a total of 1,894 bytes.
+- Average displayed request duration remained consistent at approximately 228–231 ms.
+- Movie Details navigation generated more requests and transferred more data than the other transitions.
+- No failed HTTP requests were observed during the captures.
 
-## 5. Discussion and potential improvements
+The recorded request durations represent the individual Fetch and Preflight rows visible in the Network panel, not total page-loading times.
 
-The backend tests indicate that CineVault's selected read operations completed reliably under the local test conditions. Sequential MariaDB operations returned in approximately 28–35 ms on average. MongoDB's aggregate summary operations were particularly quick for the tested data, while community review retrieval showed greater latency as worker count increased.
+### 5.2 Browser Performance Traces
 
-The concurrent tests show that throughput did not increase in proportion to the number of workers. For several MariaDB operations, throughput gains became small between 5 and 10 workers while average response time rose. Community review retrieval also experienced a substantial increase in average latency. These results suggest that further concurrency may introduce waiting or resource contention in the tested local environment; they do not, on their own, identify a specific bottleneck.
+| Navigation Transition | Trace Range | Scripting | System | Rendering | Painting |
+|---|---:|---:|---:|---:|---:|
+| Login → Home | 2.270 s | 244 ms | 128 ms | 36 ms | 17 ms |
+| Home → Search | 2.390 s | 263 ms | 134 ms | 50 ms | 29 ms |
+| Search → Movie Details | 2.160 s | 221 ms | 141 ms | 76 ms | 44 ms |
+| Movie Details → My Activity | 2.690 s | 548 ms | 134 ms | 79 ms | 30 ms |
 
-The frontend traces showed low recorded INP and small CLS values. My Activity had the largest scripting and rendering durations, so it would be a reasonable starting point for future profiling.
+**Observations:**
 
-Potential follow-up improvements include:
+- Movie Details → My Activity recorded the highest scripting duration at 548 ms.
+- Login → Home recorded the lowest rendering and painting durations at 36 ms and 17 ms respectively.
+- Search → Movie Details recorded the highest rendering and painting durations at 76 ms and 44 ms respectively.
+- The My Activity transition had the longest recorded trace range at 2.690 seconds.
 
-1. Inspect the My Activity page for repeated data lookups or unnecessary rendering work.
-2. Review frequently used MariaDB queries with `EXPLAIN` and verify that relevant join and filter columns have appropriate indexes.
-3. Review MongoDB query filters, indexes and returned document volume for community review retrieval.
-4. Consider pagination and caching for catalogue and review data where appropriate.
-5. Repeat the tests in a hosted environment with representative user sessions before making claims about production scalability.
+These measurements represent browser activity within the selected trace ranges. They should not be interpreted as verified page-load times.
 
-These are recommendations for investigation. No optimisation changes were made as part of this performance evaluation, so no before-and-after improvement is claimed.
+## 6. Discussion and Potential Improvements
 
-## 6. Limitations
+The backend benchmark showed that all selected database operations completed successfully under the tested local conditions. MariaDB operations recorded average sequential response times between approximately 18 and 25 ms, while the tested MongoDB operations completed in under 2 ms on average.
 
-- Testing was conducted on one local Windows development machine using local database services.
-- CPU model, RAM capacity, Python version and database server versions were not recorded alongside the result files.
-- The concurrency test used Python worker threads to call database functions. It did not simulate multiple complete Streamlit browser sessions or remote users.
-- Browser profiling was performed in one local browser environment. Extensions may have influenced the traces.
-- The Network panel measurements cover the visible Fetch and Preflight requests captured for each transition; they are not complete page-load measurements.
-- The Performance panel did not provide LCP values for these captures. Trace ranges should not be interpreted as page-load times.
-- The benchmark covered eight selected read operations, not every CineVault feature or write operation.
+The concurrent tests showed that increasing worker counts generally improved throughput, but also increased individual request latency. Throughput gains became smaller between 5 and 10 workers for several operations, indicating diminishing returns under the tested conditions.
 
-## 7. Reproducibility and evidence
+The MongoDB index comparison demonstrated that the `movie_newest` index reduced the number of documents examined and improved query execution time. The MariaDB and MongoDB genre-search comparison returned identical result counts, with MongoDB recording a slightly lower average execution time in this test.
 
-The benchmark can be reproduced from the project root with the virtual environment activated and both local database services running:
+Frontend Network measurements showed consistent request durations across all four navigation transitions. Browser Performance traces highlighted My Activity as a useful area for further investigation due to its relatively high scripting duration.
+
+Potential improvements include:
+
+1. Investigate the My Activity page for repeated data retrieval or unnecessary rendering work.
+2. Review MariaDB queries using `EXPLAIN` and verify relevant indexes.
+3. Review MongoDB query filters, indexes and the amount of data retrieved.
+4. Consider pagination and caching where appropriate to reduce unnecessary data retrieval.
+5. Conduct further testing with larger datasets and representative concurrent user sessions.
+
+These are suggested areas for future investigation; no performance improvement is claimed solely from these recommendations.
+
+## 7. Limitations
+
+- All tests were conducted on one local Windows development machine using local database services.
+- CPU model, RAM capacity and database server versions were not recorded.
+- Concurrent backend tests used Python worker threads calling database functions. They did not simulate multiple complete Streamlit browser sessions.
+- The backend benchmark covered eight selected read operations and did not evaluate every application feature or write operation.
+- The MongoDB-specific tests used a collection containing 144 reviews and should not be assumed to represent performance at larger scale.
+- Browser profiling was performed in one local Chrome environment, with browser extensions active during the captures. These extensions may have influenced the results.
+- Network measurements covered the visible Fetch and Preflight requests and do not represent complete page-loading times.
+- Performance trace ranges represent the selected recording windows, not verified page-load times.
+- INP, CLS and LCP were not recorded as part of the new frontend captures.
+
+## 8. Reproducibility and Evidence
+
+The backend benchmarks can be reproduced from the project root with the virtual environment activated and both local database services running.
+
+**Main backend benchmark:**
 
 ```powershell
 python scripts\benchmark_performance.py
 ```
 
-The script performs read-only operations and writes the measured outputs to `performance_results/`:
+**MongoDB-specific performance tests:**
+
+```powershell
+python -m scripts.performance_mongodb
+```
+
+The main benchmark generates:
 
 - `performance_results/sequential_results.csv`
 - `performance_results/concurrency_results.csv`
 
-The benchmark implementation is `scripts/benchmark_performance.py`.
-
-# HAVENT ATTACHED 
-For the frontend evidence, retain the four Chrome Network screenshots and 4 Performance screenshots in a folder such as `docs/performance_evidence/`. Filenames:
+Frontend evidence should be retained in a folder such as `docs/performance_evidence/`:
 
 - `network_login_to_home.png`
 - `network_home_to_search.png`
