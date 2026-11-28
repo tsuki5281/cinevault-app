@@ -69,6 +69,7 @@ cinevault-app/
 ├── app.py                      # Streamlit application entry point
 ├── .env.example                # Example environment configuration
 ├── .gitignore
+├── CineVault User Manual V3.pdf  # User manual
 ├── README.md
 └── requirements.txt            # Python dependencies
 ```
@@ -377,6 +378,7 @@ Additional technical documentation is organised by topic.
 
 | Folder / File | Contents |
 |---|---|
+| [User Manual (PDF)](CineVault%20User%20Manual%20V3.pdf) | Step-by-step guide to application setup, navigation and all implemented CineVault features. |
 | `docs/api/` | Catalogue, ratings, watchlist and reviews API documentation. |
 | `docs/database/` | MariaDB ER diagram in PNG and editable Draw.io formats. |
 | `docs/testing/` | SQL, catalogue, MongoDB and Streamlit testing results. |
